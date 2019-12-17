@@ -15,6 +15,7 @@
 |プロパティ|タイプ|説明|
 |:--|:--|:--|
 |seatName|String|監視座席の名前|
+|cameraExist|boolean|カメラの存在|
 |humanExist|boolean|監視座席の判定結果|
 
 レスポンスの例
@@ -22,10 +23,12 @@
 ```JSON
 {
     "seatName":"Alice"
+    "cameraExist":true
     "humanExist":true
 },
 {
     "seatName":"Bob"
-    "humanExist":false
+    "cameraExist":false
+    "humanExist":null
 }
 ```
