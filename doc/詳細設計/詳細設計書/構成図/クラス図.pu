@@ -1,0 +1,90 @@
+@startuml クラス図
+
+package 座席監視アプリ {
+    class "SeatMonitoringApplication" as SeatMonitoringApplication {
+        + main()
+    }
+
+	class "Screen" as Screen {
+        + show()
+        + update()
+		+ close()
+    }
+
+    class "SeatMonitoringAPIClient" as SeatMonitoringAPIClient {
+		- ipAddress
+        + get()
+    }
+
+    class "RegularNortify" as RegularNortify {
+        + time()
+        + notify()
+    }
+        note top of RegularNortify
+            ・定期的に座席状態の更新を通知するメソッド
+            ・timeメソッドから1分毎にnoticeメソッドにイベントが通知される
+        end note
+
+    class "Configration" as ClientConfigration {
+        + execute()
+    }
+
+    class "SeatStatus" as SeatStatus {
+        - seatName
+        - humanExist
+    }
+}
+
+package SeatMonitoringAPI {
+    class "Startup" as Startup {
+        + execute()
+    }
+    class "SeatsController" as SeatsController {
+        - seatsInfomation
+        + seats()
+    }
+
+    class "Photographer" as Photographer {
+        + get()
+    }
+
+    class "HumanDetector" as CsHumanDetector {
+        + execute()
+    }
+    
+    class "SeatInfomation" as SeatInfomation {
+        - seatName
+        - humanExist
+        - moniker
+        - picture
+    }
+    
+    class "Configration" as ServerConfigration {
+        + execute()
+    }
+}
+
+package CppDll {
+    class "HumanDetector" as CppHumanDetector {
+        + execute()
+    }
+}
+
+SeatMonitoringApplication -- ClientConfigration
+SeatMonitoringApplication -- RegularNortify
+RegularNortify -- Screen
+RegularNortify -- SeatStatus
+RegularNortify -right- SeatMonitoringAPIClient
+Screen -right- SeatStatus
+SeatMonitoringAPIClient -- SeatsController
+SeatMonitoringAPIClient "1"--"0..10" SeatStatus
+SeatMonitoringAPIClient -- ClientConfigration
+SeatsController -- Photographer
+SeatsController -- CsHumanDetector
+SeatsController "1"-down-*"0..10" SeatInfomation
+CppHumanDetector -right- CsHumanDetector
+Startup -- ServerConfigration
+Startup -- SeatsController
+Startup -- SeatInfomation
+
+@enduml

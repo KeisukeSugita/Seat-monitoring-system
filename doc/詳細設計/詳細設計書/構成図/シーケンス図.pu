@@ -1,0 +1,76 @@
+@startuml シーケンス図
+hide footbox
+
+participant "SeatMonitoringApplication" as SeatMonitoringApplication
+participant "Configration" as ClientConfigration
+participant "RegularNortify" as RegularNortify
+participant "SeatMonitoringAPIClient" as SeatMonitoringAPIClient
+participant "Screen" as Screen
+participant "SeatStatus" as SeatStatus
+participant "Startup" as Startup
+participant "SeatsController" as SeatsController
+participant "Photographer" as Photographer
+participant "HumanDetector" as CsHumanDetector
+participant "SeatInfomation" as SeatInfomation
+participant "Configration" as ServerConfigration
+participant "HumanDetector" as CppHumanDetector
+
+activate SeatMonitoringApplication
+SeatMonitoringApplication -> ClientConfigration : execute
+activate ClientConfigration
+deactivate ClientConfigration
+
+SeatMonitoringApplication -> Screen : show
+activate Screen
+
+SeatMonitoringApplication -> RegularNortify : time
+activate RegularNortify
+
+loop for application ends
+	RegularNortify -> RegularNortify : notify
+	activate RegularNortify
+
+	RegularNortify -> SeatMonitoringAPIClient : get
+	activate SeatMonitoringAPIClient
+
+	SeatMonitoringAPIClient -> SeatsController : seats
+	activate SeatsController
+
+	SeatsController -> Photographer : get
+	activate Photographer
+
+	SeatsController <- Photographer : "picture"
+	deactivate Photographer
+
+	SeatsController -> CsHumanDetector : execute
+	activate CsHumanDetector
+
+	CsHumanDetector -> CppHumanDetector : execute
+	activate CppHumanDetector
+
+	CsHumanDetector <- CppHumanDetector : "result"
+	deactivate CppHumanDetector
+
+	SeatsController <- CsHumanDetector : "result"
+	deactivate CsHumanDetector
+
+	SeatMonitoringAPIClient <- SeatsController : "seatsInformation"
+	deactivate SeatsController
+
+	RegularNortify <- SeatMonitoringAPIClient : "seatsStatus"
+	deactivate SeatMonitoringAPIClient
+	
+	RegularNortify -> Screen : update
+	activate Screen
+	deactivate Screen
+	deactivate RegularNortify
+end
+
+SeatMonitoringApplication -> Screen : close
+activate Screen
+deactivate RegularNortify
+deactivate Screen
+deactivate Screen
+deactivate SeatMonitoringApplication
+
+@enduml
