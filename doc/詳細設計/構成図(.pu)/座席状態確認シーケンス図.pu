@@ -7,6 +7,9 @@ participant "RegularNortifier" as RegularNortifier
 -> Screen :loadイベント
 activate Screen
 Screen -> RegularNortifier :RegularNortifier(update())
+note right
+	通知先を登録する
+end note
 
 Screen -> RegularNortifier :start(Configration)
 activate RegularNortifier
@@ -18,6 +21,7 @@ note right
 	・座席の写真を撮影
 	・撮影した写真から座席状態を確認
 	・確認結果で画面を更新する
+	詳細を別図(座席状態確認シーケンス図2)に示す
 end note
 
 @enduml

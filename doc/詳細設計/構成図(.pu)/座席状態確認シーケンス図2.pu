@@ -1,16 +1,26 @@
 @startuml 座席状態確認シーケンス図2
 hide footbox
+skinparam BoxPadding 20
 
-participant "RegularNortify" as RegularNortify
-participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
-participant "SeatsController" as SeatsController
-participant "Photographer" as Photographer
-participant "HumanDetector" as CsHumanDetector
-participant "HumanDetector" as CppHumanDetector
-participant "SeatStatus" as SeatStatus
-participant "Screen" as Screen
+box "座席監視アプリ"
+	participant "RegularNortify" as RegularNortify
+	participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
+	participant "SeatStatus" as SeatStatus
+	participant "Screen" as Screen
+end box
+
+box "SeatMonitoringAPI"
+	participant "SeatsController" as SeatsController
+	participant "Photographer" as Photographer
+	participant "HumanDetector" as CsHumanDetector
+	participant "HumanDetector" as CppHumanDetector
+end box
 
 -> RegularNortify :start(Configratinon)
+note right
+	座席監視アプリのConfigrationクラスは
+	接続するサーバのIPアドレスをメンバに持つ
+end note
 
 RegularNortify -> RegularNortify : execute(Configration)
 activate RegularNortify
@@ -22,11 +32,25 @@ loop stopFlagがfalseの間
 	SeatMonitoringApiClient -> SeatsController : seats()
 	activate SeatsController
 
+	note right
+		SeatMonitoringAPIのConfigrationクラスは
+		SeatInformationクラスのリストをメンバに持つ
+
+		SeatInformationクラスは以下のメンバを持つ
+		・seatName(監視座席名)
+		・humanExist(座席状態)
+		・moniker(モニカ(デバイスインスタンスパス))
+		・picture(画像)
+	end note
+
 	SeatsController -> Photographer : get(Configration)
 	activate Photographer
-
 	SeatsController <- Photographer : "Configration"
 	deactivate Photographer
+	note right
+		monikerでカメラを指定して画像を取得し、
+		pictureに格納する
+	end note
 
 	SeatsController -> CsHumanDetector : execute(Configration)
 	activate CsHumanDetector
@@ -39,7 +63,7 @@ loop stopFlagがfalseの間
 	end
 	note right
 		監視座席数分の画像を1枚ずつ判定し、
-		結果をConfigrationに反映する
+		結果をhumanExistに反映する
 	end note
 	
 	SeatsController <- CsHumanDetector : "Configration"
@@ -54,17 +78,20 @@ loop stopFlagがfalseの間
 	note right
 		監視座席数分のインスタンスを作成し、
 		リストを作成する
+
+		SeatStatusクラスは以下のメンバを持つ
+		・seatName(監視座席名)
+		・humanExist(座席状態)
 	end note
 
 	RegularNortify <- SeatMonitoringApiClient : "List<SeatStatus>"
 	deactivate SeatMonitoringApiClient
-
+	|||
 	RegularNortify -> Screen : update(List<SeatStatus>)
 	activate Screen
 	RegularNortify <- Screen
 	deactivate Screen
 	deactivate RegularNortify
-	... (60秒 - ループ内の処理時間)秒待つ ...
 end
 
 @enduml
