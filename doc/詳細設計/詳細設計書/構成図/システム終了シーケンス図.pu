@@ -1,0 +1,19 @@
+@startuml システム終了シーケンス図
+hide footbox
+
+participant "Screen" as Screen
+participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
+
+-> Screen :closeイベント close()
+activate Screen
+Screen -> SeatMonitoringApiClient :stop()
+activate SeatMonitoringApiClient
+Screen <- SeatMonitoringApiClient
+deactivate SeatMonitoringApiClient
+note left
+	Screenのcloseメソッド終了後、
+	Screen:showメソッドが終了して画面が閉じ、
+	SeatMonitoringApplication:mainメソッドが終了する
+end note
+
+@enduml

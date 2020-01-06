@@ -1,0 +1,23 @@
+@startuml 画面処理シーケンス図
+hide footbox
+
+participant "Screen" as Screen
+participant "RegularNortifier" as RegularNortifier
+
+-> Screen :lodeイベント
+activate Screen
+Screen -> RegularNortifier :RegularNortifier(update())
+
+Screen -> RegularNortifier :start(Configration)
+activate RegularNortifier
+Screen <- RegularNortifier
+deactivate RegularNortifier
+deactivate Screen
+note right
+	1分毎に以下の処理を行う
+	・座席の写真を撮影
+	・撮影した写真から座席状態を確認
+	・確認結果で画面を更新する
+end note
+
+@enduml

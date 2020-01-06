@@ -1,0 +1,55 @@
+@startuml 画面処理シーケンス図2
+hide footbox
+
+participant "RegularNortify"
+participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
+participant "SeatsController" as SeatsController
+participant "Photographer" as Photographer
+participant "HumanDetector" as CsHumanDetector
+participant "HumanDetector" as CppHumanDetector
+
+-> RegularNortify :start(Configratinon)
+
+RegularNortify -> RegularNortify : execute(Configration)
+activate RegularNortify
+
+loop 
+	RegularNortify -> SeatMonitoringApiClient : get()
+	activate SeatMonitoringApiClient
+
+	SeatMonitoringApiClient -> SeatsController : seats()
+	activate SeatsController
+
+	SeatsController -> Photographer : get(Configration)
+	activate Photographer
+
+	SeatsController <- Photographer : "Configration"
+	deactivate Photographer
+
+	SeatsController -> CsHumanDetector : execute(Configration)
+	activate CsHumanDetector
+
+	CsHumanDetector -> CppHumanDetector : execute(picture)
+	activate CppHumanDetector
+
+	CsHumanDetector <- CppHumanDetector : "result"
+	deactivate CppHumanDetector
+
+	SeatsController <- CsHumanDetector : "Configration"
+	deactivate CsHumanDetector
+
+	SeatMonitoringApiClient <- SeatsController : "座席情報のオブジェクト"
+	deactivate SeatsController
+
+	RegularNortify <- SeatMonitoringApiClient : "List<SeatStatus>"
+	deactivate SeatMonitoringApiClient
+
+	RegularNortify -> Screen : update(List<SeatStatus>)
+	activate Screen
+	RegularNortify <- Screen
+	deactivate Screen
+	deactivate RegularNortify
+	... 60秒 - ループ内の処理時間 待つ ...
+end
+
+@enduml

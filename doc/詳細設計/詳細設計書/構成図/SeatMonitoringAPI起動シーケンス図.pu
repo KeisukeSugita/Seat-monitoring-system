@@ -1,0 +1,28 @@
+@startuml SeatMonitoringAPI起動シーケンス図
+hide footbox
+
+participant "SeatMonitoringApiController" as SeatMonitoringApiController
+participant "Configration" as Configration
+participant "SeatInformation" as SeatInformation
+
+-> SeatMonitoringApiController :起動イベント initialize()
+activate SeatMonitoringApiController
+SeatMonitoringApiController -> Configration : set()
+activate Configration
+Configration -> Configration :readFile()
+activate Configration
+
+loop
+	Configration -> SeatInformation :new
+end
+note right
+	ファイルから読み込んだ監視座席数分
+	のインスタンスを作成し、リストにする
+end note
+
+Configration -> Configration
+deactivate Configration
+SeatMonitoringApiController <- Configration
+deactivate Configration
+
+@enduml
