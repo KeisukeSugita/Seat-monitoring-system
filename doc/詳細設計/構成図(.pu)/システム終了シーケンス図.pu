@@ -2,14 +2,18 @@
 hide footbox
 
 participant "Screen" as Screen
-participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
+participant "RegularNortifier" as RegularNortifier
 
 -> Screen :closeイベント close()
 activate Screen
-Screen -> SeatMonitoringApiClient :stop()
-activate SeatMonitoringApiClient
-Screen <- SeatMonitoringApiClient
-deactivate SeatMonitoringApiClient
+Screen -> RegularNortifier :stop()
+activate RegularNortifier
+Screen <- RegularNortifier
+deactivate RegularNortifier
+note right
+	stopFlagを立てて
+	executeメソッドを終了させる
+end note
 note left
 	Screenのcloseメソッド終了後、
 	Screen:showメソッドが終了して画面が閉じ、
