@@ -1,33 +1,39 @@
 @startuml クラス図
+left to right direction
 
 package 座席監視アプリ {
     class "SeatMonitoringApplication" as SeatMonitoringApplication {
-        + main()
+        + main():void
+    }
+
+    class "Configration" as ClientConfigration {
+		- ipAddress
+        + set():void
     }
 
 	class "Screen" as Screen {
-        + show()
-        + update()
-		+ close()
+        + show(Configration):void
+        + update(List<SeatStatus>):void
+		+ close():void
     }
 
-    class "SeatMonitoringAPIClient" as SeatMonitoringAPIClient {
-		- ipAddress
-        + get()
+    class "SeatMonitoringApiClient" as SeatMonitoringApiClient {
+        + get(Configration):List<SeatStatus>
     }
 
-    class "RegularNortify" as RegularNortify {
-        + time()
-        + notify()
+    class "RegularNortifier" as RegularNortifier {
+        - destination
+        - stopFlag
+        + RegularNortifier(update())
+        + start(Configration):void
+        + execute(Configration):void
+        + stop():void
     }
-        note top of RegularNortify
-            ・定期的に座席状態の更新を通知するメソッド
-            ・timeメソッドから1分毎にnoticeメソッドにイベントが通知される
+        note top of RegularNortifier
+            ・定期的に座席状態の更新を通知するクラス
+            ・コンストラクタで通知先を登録する
+            ・executeメソッドから1分毎に座席の状態をdestinationに通知する
         end note
-
-    class "Configration" as ClientConfigration {
-        + execute()
-    }
 
     class "SeatStatus" as SeatStatus {
         - seatName
@@ -35,56 +41,56 @@ package 座席監視アプリ {
     }
 }
 
-package SeatMonitoringAPI {
-    class "Startup" as Startup {
-        + execute()
-    }
+package SeatMonitoringApi {
     class "SeatsController" as SeatsController {
-        - seatsInfomation
-        + seats()
+        + initialize():void
+        + seats():座席情報のオブジェクト
+    }
+    
+    class "Configration" as ServerConfigration {
+        - seatsInformation
+        + set():void
     }
 
     class "Photographer" as Photographer {
-        + get()
-    }
-
-    class "HumanDetector" as CsHumanDetector {
-        + execute()
+        + get(Configration):Configration
     }
     
-    class "SeatInfomation" as SeatInfomation {
+    class "SeatInformation" as SeatInformation {
         - seatName
         - humanExist
         - moniker
         - picture
     }
     
-    class "Configration" as ServerConfigration {
-        + execute()
+    class "HumanDetector" as CsHumanDetector {
+        + execute(Configration):Configration
     }
 }
 
 package CppDll {
     class "HumanDetector" as CppHumanDetector {
-        + execute()
+        + execute(picture):boolean
     }
 }
 
 SeatMonitoringApplication -- ClientConfigration
-SeatMonitoringApplication -- RegularNortify
-RegularNortify -- Screen
-RegularNortify -- SeatStatus
-RegularNortify -right- SeatMonitoringAPIClient
-Screen -right- SeatStatus
-SeatMonitoringAPIClient -- SeatsController
-SeatMonitoringAPIClient "1"--"0..10" SeatStatus
-SeatMonitoringAPIClient -- ClientConfigration
+SeatMonitoringApplication -left- Screen
+Screen -down- RegularNortifier
+RegularNortifier -down- SeatMonitoringApiClient
+RegularNortifier .> ClientConfigration
+RegularNortifier .left.> SeatStatus
+Screen .> SeatStatus
+Screen .> ClientConfigration
+SeatMonitoringApiClient .left.> ClientConfigration
+SeatMonitoringApiClient "1"-left-"0..10" SeatStatus
+SeatMonitoringApiClient -- SeatsController
+ServerConfigration "1"*-down-"0..10" SeatInformation
+SeatsController -- ServerConfigration
 SeatsController -- Photographer
 SeatsController -- CsHumanDetector
-SeatsController "1"-down-*"0..10" SeatInfomation
-CppHumanDetector -right- CsHumanDetector
-Startup -- ServerConfigration
-Startup -- SeatsController
-Startup -- SeatInfomation
+CppHumanDetector -- CsHumanDetector
+Photographer .> ServerConfigration
+CsHumanDetector .> ServerConfigration
 
 @enduml
