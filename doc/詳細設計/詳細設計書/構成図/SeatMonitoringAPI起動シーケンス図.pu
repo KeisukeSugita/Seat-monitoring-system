@@ -20,7 +20,6 @@ note right
 	のインスタンスを作成し、リストを作成する
 end note
 
-Configration -> Configration
 deactivate Configration
 SeatMonitoringApiController <- Configration
 deactivate Configration
