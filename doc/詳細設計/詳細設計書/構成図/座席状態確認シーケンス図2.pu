@@ -1,19 +1,21 @@
-@startuml 画面処理シーケンス図2
+@startuml 座席状態確認シーケンス図2
 hide footbox
 
-participant "RegularNortify"
+participant "RegularNortify" as RegularNortify
 participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
 participant "SeatsController" as SeatsController
 participant "Photographer" as Photographer
 participant "HumanDetector" as CsHumanDetector
 participant "HumanDetector" as CppHumanDetector
+participant "SeatStatus" as SeatStatus
+participant "Screen" as Screen
 
 -> RegularNortify :start(Configratinon)
 
 RegularNortify -> RegularNortify : execute(Configration)
 activate RegularNortify
 
-loop 
+loop stopFlagがfalseの間
 	RegularNortify -> SeatMonitoringApiClient : get()
 	activate SeatMonitoringApiClient
 
@@ -29,17 +31,30 @@ loop
 	SeatsController -> CsHumanDetector : execute(Configration)
 	activate CsHumanDetector
 
-	CsHumanDetector -> CppHumanDetector : execute(picture)
-	activate CppHumanDetector
-
-	CsHumanDetector <- CppHumanDetector : "result"
-	deactivate CppHumanDetector
-
+	loop 監視座席数
+		CsHumanDetector -> CppHumanDetector : execute(picture)
+		activate CppHumanDetector
+		CsHumanDetector <- CppHumanDetector : "result"
+		deactivate CppHumanDetector
+	end
+	note right
+		監視座席数分の画像を1枚ずつ判定し、
+		結果をConfigrationに反映する
+	end note
+	
 	SeatsController <- CsHumanDetector : "Configration"
 	deactivate CsHumanDetector
 
 	SeatMonitoringApiClient <- SeatsController : "座席情報のオブジェクト"
 	deactivate SeatsController
+
+	loop 監視座席数
+		SeatMonitoringApiClient -> SeatStatus :new
+	end
+	note right
+		監視座席数分のインスタンスを作成し、
+		リストを作成する
+	end note
 
 	RegularNortify <- SeatMonitoringApiClient : "List<SeatStatus>"
 	deactivate SeatMonitoringApiClient
@@ -49,7 +64,7 @@ loop
 	RegularNortify <- Screen
 	deactivate Screen
 	deactivate RegularNortify
-	... 60秒 - ループ内の処理時間 待つ ...
+	... (60秒 - ループ内の処理時間)秒待つ ...
 end
 
 @enduml

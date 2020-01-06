@@ -17,7 +17,7 @@ loop
 end
 note right
 	ファイルから読み込んだ監視座席数分
-	のインスタンスを作成し、リストにする
+	のインスタンスを作成し、リストを作成する
 end note
 
 Configration -> Configration

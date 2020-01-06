@@ -1,10 +1,10 @@
-@startuml 画面処理シーケンス図
+@startuml 座席状態確認シーケンス図
 hide footbox
 
 participant "Screen" as Screen
 participant "RegularNortifier" as RegularNortifier
 
--> Screen :lodeイベント
+-> Screen :loadイベント
 activate Screen
 Screen -> RegularNortifier :RegularNortifier(update())
 
