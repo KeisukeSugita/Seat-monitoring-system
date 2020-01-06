@@ -7,7 +7,7 @@ package 座席監視アプリ {
     }
 
     class "Configration" as ClientConfigration {
-		- ipAddress
+		- ipAddress:string
         + set():void
     }
 
@@ -22,8 +22,8 @@ package 座席監視アプリ {
     }
 
     class "RegularNortifier" as RegularNortifier {
-        - destination
-        - stopFlag
+        - destination:delegate
+        - stopFlag:boolean
         + RegularNortifier(update())
         + start(Configration):void
         + execute(Configration):void
@@ -36,8 +36,8 @@ package 座席監視アプリ {
         end note
 
     class "SeatStatus" as SeatStatus {
-        - seatName
-        - humanExist
+        - seatName:string
+        - humanExist:boolean
     }
 }
 
@@ -48,7 +48,7 @@ package SeatMonitoringApi {
     }
     
     class "Configration" as ServerConfigration {
-        - seatsInformation
+        - seatsInformation:List<seatInformation>
         + set():void
     }
 
@@ -57,10 +57,10 @@ package SeatMonitoringApi {
     }
     
     class "SeatInformation" as SeatInformation {
-        - seatName
-        - humanExist
-        - moniker
-        - picture
+        - seatName:string
+        - humanExist:boolean
+        - moniker:string
+        - picture:Bitmap
     }
     
     class "HumanDetector" as CsHumanDetector {
