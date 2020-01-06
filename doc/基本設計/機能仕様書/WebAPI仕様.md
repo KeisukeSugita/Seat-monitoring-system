@@ -23,7 +23,7 @@
 ```JSON
 {
     "seatName":"Alice",
-    "statusUnderstand":true,
+    "statusUnderstanding":true,
     "humanExist":true
 },
 {
