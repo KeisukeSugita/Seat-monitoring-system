@@ -9,8 +9,6 @@ participant "SeatInformation" as SeatInformation
 activate SeatMonitoringApiController
 SeatMonitoringApiController -> Configration : set()
 activate Configration
-Configration -> Configration :readFile()
-activate Configration
 
 loop
 	Configration -> SeatInformation :new
