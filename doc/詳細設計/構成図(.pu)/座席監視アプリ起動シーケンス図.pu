@@ -7,7 +7,7 @@ participant "Screen" as Screen
 
 -> SeatMonitoringApplication :main()
 activate SeatMonitoringApplication
-SeatMonitoringApplication -> Configration : set()
+SeatMonitoringApplication -> Configration : Configration()
 activate Configration
 SeatMonitoringApplication <- Configration
 deactivate Configration

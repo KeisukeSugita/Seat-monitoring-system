@@ -7,11 +7,11 @@ participant "SeatInformation" as SeatInformation
 
 -> SeatMonitoringApiController :起動イベント initialize()
 activate SeatMonitoringApiController
-SeatMonitoringApiController -> Configration : set()
+SeatMonitoringApiController -> Configration : Configration()
 activate Configration
 
 loop
-	Configration -> SeatInformation :new
+	Configration -> SeatInformation :SeatInformation(string, string)
 end
 note right
 	ファイルから読み込んだ監視座席数分
