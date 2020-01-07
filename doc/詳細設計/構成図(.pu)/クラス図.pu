@@ -8,7 +8,8 @@ package 座席監視アプリ {
 
     class "Configration" as ClientConfigration {
 		- ipAddress:string
-        + set():void
+        + Configration()
+        - initialize():void
     }
 
 	class "Screen" as Screen {
@@ -74,22 +75,22 @@ package CppDll {
     }
 }
 
-SeatMonitoringApplication -- ClientConfigration
-SeatMonitoringApplication -left- Screen
+SeatMonitoringApplication -> ClientConfigration
+SeatMonitoringApplication -left-> Screen
 Screen -down- RegularNortifier
-RegularNortifier -down- SeatMonitoringApiClient
+RegularNortifier -down-> SeatMonitoringApiClient
 RegularNortifier .> ClientConfigration
 RegularNortifier .left.> SeatStatus
 Screen .> SeatStatus
 Screen .> ClientConfigration
 SeatMonitoringApiClient .left.> ClientConfigration
-SeatMonitoringApiClient "1"-left-"0..10" SeatStatus
-SeatMonitoringApiClient -- SeatsController
+SeatMonitoringApiClient "1"-left->"0..10" SeatStatus
+SeatMonitoringApiClient -down-> SeatsController
 ServerConfigration "1"*-down-"0..10" SeatInformation
-SeatsController -- ServerConfigration
-SeatsController -- Photographer
-SeatsController -- CsHumanDetector
-CppHumanDetector -- CsHumanDetector
+SeatsController -> ServerConfigration
+SeatsController --> Photographer
+SeatsController --> CsHumanDetector
+CppHumanDetector <-- CsHumanDetector
 Photographer .> ServerConfigration
 CsHumanDetector .> ServerConfigration
 
