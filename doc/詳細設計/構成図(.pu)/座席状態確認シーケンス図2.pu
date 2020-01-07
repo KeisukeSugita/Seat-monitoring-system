@@ -92,6 +92,13 @@ loop stopFlagがfalseの間
 	RegularNortify <- Screen
 	deactivate Screen
 	deactivate RegularNortify
+	note right
+		updateメソッド終了までの処理時間を計測し、
+		loop内の処理時間が60秒になるように待機する処理を行う
+		SeatMonitoringAPIからのレスポンスが60秒以上無かった場合、
+		タイムアウトとして画面にはサーバ接続エラーアイコンを表示し、
+		待機処理を行わず次のループ処理を行う
+	end note
 end
 
 @enduml
