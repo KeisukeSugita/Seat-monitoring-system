@@ -17,6 +17,7 @@ package 座席監視アプリ {
         + show(Configration):void
         + update(List<SeatStatus>):void
 		+ close():void
+        + initializeError():void
     }
 
     class "SeatMonitoringApiClient" as SeatMonitoringApiClient {
@@ -28,7 +29,7 @@ package 座席監視アプリ {
         - stopFlag:boolean
         + RegularNortifier(delegate)
         + start(Configration):void
-        + execute(Configration):void
+        - execute(Configration):void
         + stop():void
     }
         note top of RegularNortifier
@@ -45,7 +46,7 @@ package 座席監視アプリ {
         - setHumanexist(boolean):void
         + getSeatName():string
         + getHumanexist():boolean
-            }
+    }
 }
 
 package SeatMonitoringApi {
@@ -53,22 +54,24 @@ package SeatMonitoringApi {
         - configration:Configration
         + initialize():void
         + seats():座席情報のオブジェクト
+        + end():void
     }
     
     class "Configration" as ServerConfigration {
         - seatsInformation:List<seatInformation>
         + Configration()
         - initialize():void
-        + getConfigration():Congfigration
+        + setSeatsInformation(List<seatInformation>):void
+        + getSeatsInformation():List<seatInformation>
     }
 
     class "Photographer" as Photographer {
         + shoot(Configration):void
     }
         note right of Photographer
-            ・Configrationのmonikerを読み込み、
+            ・ConfigrationのListからmonikerを読み込み、
             　そのカメラから画像を取得するクラス
-            ・取得した画像はConfigrationのpictureに格納する
+            ・取得した画像はConfigrationのListのpictureに格納する
         end note
     
     class "SeatInformation" as SeatInformation {
@@ -91,17 +94,17 @@ package SeatMonitoringApi {
         + execute(Configration):void
     }
         note right of CsHumanDetector
-            ・Configrationのpictureを読み込み、
+            ・ConfigrationのListからpictureを読み込み、
             　その画像に人が写っているかを判定するクラス
             ・実際に判定を行っているのはC++のプログラム
             　(CppDll:HumanDetector)
-            ・判定結果はConfigrationのhumanExistに格納する
+            ・判定結果はConfigrationのListのhumanExistに格納する
         end note
 }
 
 package CppDll {
     class "HumanDetector" as CppHumanDetector {
-        + execute(picture):boolean
+        + execute(unsigned char[]):boolean
     }
 }
 

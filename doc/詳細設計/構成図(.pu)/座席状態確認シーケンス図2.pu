@@ -3,7 +3,7 @@ hide footbox
 skinparam BoxPadding 20
 
 box "座席監視アプリ"
-	participant "RegularNortify" as RegularNortify
+	participant "RegularNortifier" as RegularNortifier
 	participant "SeatMonitoringApiClient" as SeatMonitoringApiClient
 	participant "SeatStatus" as SeatStatus
 	participant "Screen" as Screen
@@ -13,85 +13,137 @@ box "SeatMonitoringAPI"
 	participant "SeatsController" as SeatsController
 	participant "Photographer" as Photographer
 	participant "HumanDetector" as CsHumanDetector
+	participant "Configration" as Configration
+	participant "SeatInformation" as SeatInformation
+end box
+
+box "CppDll"
 	participant "HumanDetector" as CppHumanDetector
 end box
 
--> RegularNortify :start(Configratinon)
+-> RegularNortifier :start(Configratinon)
 note right
 	座席監視アプリのConfigrationクラスは
 	接続するサーバのIPアドレスをメンバに持つ
 end note
 
-RegularNortify -> RegularNortify : execute(Configration)
-activate RegularNortify
+RegularNortifier -> RegularNortifier : execute(Configration) 非同期呼び出し
+activate RegularNortifier
+
+note over Configration, SeatInformation
+	SeatMonitoringAPIのConfigrationクラスは
+	SeatInformationクラスのリストをメンバに持つ
+
+	SeatInformationクラスは以下のメンバを持つ
+	・seatName(監視座席名)
+	・humanExist(座席状態)
+	・moniker(モニカ(デバイスインスタンスパス))
+	・picture(画像)
+end note
 
 loop stopFlagがfalseの間
-	RegularNortify -> SeatMonitoringApiClient : get()
+	RegularNortifier -> SeatMonitoringApiClient : get(Configration)
 	activate SeatMonitoringApiClient
 
-	SeatMonitoringApiClient -> SeatsController : seats()
+	SeatMonitoringApiClient -> SeatsController : seats() [HTTPリクエスト]
 	activate SeatsController
 
-	note right
-		SeatMonitoringAPIのConfigrationクラスは
-		SeatInformationクラスのリストをメンバに持つ
-
-		SeatInformationクラスは以下のメンバを持つ
-		・seatName(監視座席名)
-		・humanExist(座席状態)
-		・moniker(モニカ(デバイスインスタンスパス))
-		・picture(画像)
-	end note
-
-	SeatsController -> Photographer : get(Configration)
+	create Photographer
+	SeatsController -> Photographer : new
+	SeatsController -> Photographer : shoot(Configration)
 	activate Photographer
-	SeatsController <- Photographer : "Configration"
-	deactivate Photographer
+	Photographer -> Configration :getSeatsInformation()
+	activate Configration
+	Photographer <- Configration :"List<SeatInformation>"
+	deactivate Configration
+	|||
+	loop 監視座席数
+		Photographer -> SeatInformation :getMoniker()
+		activate SeatInformation
+		Photographer <- SeatInformation :"string"
+		deactivate SeatInformation
+		|||
+		Photographer -> SeatInformation :setPicture(Bitmap)
+		activate SeatInformation
+		Photographer <- SeatInformation
+		deactivate SeatInformation
+	end
 	note right
 		monikerでカメラを指定して画像を取得し、
 		pictureに格納する
 	end note
+	|||
+	Photographer -> Configration :setSeatsInformation()
+	activate Configration
+	Photographer <- Configration
+	deactivate Configration
+	SeatsController <- Photographer
+	deactivate Photographer
 
+	|||
+	create CsHumanDetector
+	SeatsController -> CsHumanDetector : new
 	SeatsController -> CsHumanDetector : execute(Configration)
 	activate CsHumanDetector
 
+	create CppHumanDetector
+	CsHumanDetector -> CppHumanDetector :new
+	CsHumanDetector -> Configration :getSeatsInformation()
+	activate Configration
+	CsHumanDetector <- Configration :"List<SeatInformation>"
+	deactivate Configration
+	|||
 	loop 監視座席数
-		CsHumanDetector -> CppHumanDetector : execute(picture)
+		CsHumanDetector -> SeatInformation :getPicture()
+		activate SeatInformation
+		CsHumanDetector <- SeatInformation :"Bitmap"
+		deactivate SeatInformation
+		|||
+		CsHumanDetector -> CppHumanDetector : execute(unsigned char[])
 		activate CppHumanDetector
-		CsHumanDetector <- CppHumanDetector : "result"
+		CsHumanDetector <- CppHumanDetector : "boolean"
 		deactivate CppHumanDetector
+		|||
+		CsHumanDetector -> SeatInformation :setHumanExist(boolean)
+		activate SeatInformation
+		CsHumanDetector <- SeatInformation
+		deactivate SeatInformation
 	end
 	note right
 		監視座席数分の画像を1枚ずつ判定し、
 		結果をhumanExistに反映する
 	end note
+	|||
+	CsHumanDetector -> Configration :setSeatsInformation()
+	activate Configration
+	CsHumanDetector <- Configration
+	deactivate Configration
 	
-	SeatsController <- CsHumanDetector : "Configration"
+	
+	SeatsController <- CsHumanDetector
 	deactivate CsHumanDetector
 
-	SeatMonitoringApiClient <- SeatsController : "座席情報のオブジェクト"
+	SeatMonitoringApiClient <- SeatsController : "座席情報のオブジェクト" [レスポンス]
 	deactivate SeatsController
 
 	loop 監視座席数
+		create SeatStatus
 		SeatMonitoringApiClient -> SeatStatus :SeatStatus(string, boolean)
 	end
 	note right
-		監視座席数分のインスタンスを作成し、
-		リストを作成する
-
-		SeatStatusクラスは以下のメンバを持つ
-		・seatName(監視座席名)
-		・humanExist(座席状態)
+		監視座席数分のインスタンスのリストを作成する
+		SeatStatusのコンストラクタはseatNameとhumanExistを
+		引数に受け取って初期化を行う
 	end note
 
-	RegularNortify <- SeatMonitoringApiClient : "List<SeatStatus>"
+	RegularNortifier <- SeatMonitoringApiClient : "List<SeatStatus>"
 	deactivate SeatMonitoringApiClient
 	|||
-	RegularNortify -> Screen : update(List<SeatStatus>)
+	RegularNortifier -> Screen : update(List<SeatStatus>)
 	activate Screen
-	RegularNortify <- Screen
+	RegularNortifier <- Screen
 	deactivate Screen
-	deactivate RegularNortify
+	deactivate RegularNortifier
 	note right
 		updateメソッド終了までの処理時間を計測し、
 		loop内の処理時間が60秒になるように待機する処理を行う

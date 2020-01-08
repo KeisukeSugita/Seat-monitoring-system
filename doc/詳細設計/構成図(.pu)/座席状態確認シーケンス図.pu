@@ -4,11 +4,13 @@ hide footbox
 participant "Screen" as Screen
 participant "RegularNortifier" as RegularNortifier
 
--> Screen :loadイベント
+-> Screen :show(Configration)
+Screen -> Screen :画面表示イベント 以降非同期処理
 activate Screen
-Screen -> RegularNortifier :RegularNortifier(update())
+create RegularNortifier
+Screen -> RegularNortifier :new RegularNortifier(update())
 note right
-	通知先を登録する
+	コンストラクタで通知先を登録する
 end note
 
 Screen -> RegularNortifier :start(Configration)
@@ -17,7 +19,7 @@ Screen <- RegularNortifier
 deactivate RegularNortifier
 deactivate Screen
 note right
-	1分毎に以下の処理を行う
+	1分毎に以下の処理を非同期に行う
 	・座席の写真を撮影
 	・撮影した写真から座席状態を確認
 	・確認結果で画面を更新する

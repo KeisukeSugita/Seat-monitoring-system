@@ -7,19 +7,32 @@ participant "Screen" as Screen
 
 -> SeatMonitoringApplication :main()
 activate SeatMonitoringApplication
-SeatMonitoringApplication -> Configration : Configration()
-activate Configration
-SeatMonitoringApplication <- Configration
-deactivate Configration
+create Configration
+SeatMonitoringApplication -> Configration : new
 note right
-	ファイルからアクセスするサーバの
-	IPアドレスを取得し、フィールドにセットする
+	コンストラクタでinitializeメソッドを呼び出し、
+	ファイルからアクセスするサーバのIPアドレスを取得して
+	フィールドにセットする
 end note
 
-SeatMonitoringApplication -> Screen : show(Configration)
-activate Screen
-SeatMonitoringApplication <- Screen
-deactivate Screen
-deactivate SeatMonitoringApplication
+create Screen
+	SeatMonitoringApplication -> Screen : new
+
+alt ファイル読み込みに成功
+	SeatMonitoringApplication -> Screen : show(Configration)
+	activate Screen
+	SeatMonitoringApplication <- Screen
+	deactivate Screen
+else ファイル読み込みに失敗
+	SeatMonitoringApplication -> Screen :initializeError()
+	activate Screen
+	SeatMonitoringApplication <- Screen
+	deactivate Screen
+	deactivate SeatMonitoringApplication
+	note right
+		エラーメッセージを表示し、
+		OKボタン押下でアプリケーションを終了する
+	end note
+end
 
 @enduml

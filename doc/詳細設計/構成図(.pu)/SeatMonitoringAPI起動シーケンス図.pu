@@ -7,19 +7,30 @@ participant "SeatInformation" as SeatInformation
 
 -> SeatMonitoringApiController :起動イベント initialize()
 activate SeatMonitoringApiController
-SeatMonitoringApiController -> Configration : Configration()
+
+create Configration
+SeatMonitoringApiController -> Configration : new Configration()
 activate Configration
 
-loop
-	Configration -> SeatInformation :SeatInformation(string, string)
+alt ファイル読み込みに成功
+	loop
+		create SeatInformation
+		Configration -> SeatInformation :new SeatInformation(string, string)
+	end
+	note right
+		Configrationのコンストラクタでファイルを読み、
+		読み込んだ監視座席数分のインスタンスのリストを作成する
+		SeatInformationのコンストラクタはseatNameとmonikerを
+		引数に受け取って初期化を行う
+	end note
+|||
+else ファイル読み込みに失敗
+	SeatMonitoringApiController -> SeatMonitoringApiController :end()
+	deactivate Configration
+	deactivate SeatMonitoringApiController
+	note right
+		アプリケーションを終了させる
+	end note
 end
-note right
-	ファイルから読み込んだ監視座席数分
-	のインスタンスを作成し、リストを作成する
-end note
-
-deactivate Configration
-SeatMonitoringApiController <- Configration
-deactivate Configration
 
 @enduml

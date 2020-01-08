@@ -4,12 +4,13 @@ hide footbox
 participant "Screen" as Screen
 participant "RegularNortifier" as RegularNortifier
 
--> Screen :closeイベント close()
+Screen -> Screen :closeイベント close()
 activate Screen
 Screen -> RegularNortifier :stop()
 activate RegularNortifier
 Screen <- RegularNortifier
 deactivate RegularNortifier
+deactivate Screen
 note right
 	stopFlagを立てて
 	executeメソッドを終了させる
