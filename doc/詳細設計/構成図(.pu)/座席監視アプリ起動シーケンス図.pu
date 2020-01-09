@@ -2,13 +2,13 @@
 hide footbox
 
 participant "SeatMonitoringApplication" as SeatMonitoringApplication
-participant "Configration" as Configration
+participant "Configuration" as Configuration
 participant "Screen" as Screen
 
 -> SeatMonitoringApplication :Main()
 activate SeatMonitoringApplication
-create Configration
-SeatMonitoringApplication -> Configration : new
+create Configuration
+SeatMonitoringApplication -> Configuration : new
 note right
 	コンストラクタでファイルからアクセスする
 	サーバのIPアドレスを取得してフィールドにセットする
@@ -17,7 +17,7 @@ end note
 alt ファイル読み込みに成功
 	create Screen
 	SeatMonitoringApplication -> Screen : new
-	SeatMonitoringApplication -> Screen : Show(Configration)
+	SeatMonitoringApplication -> Screen : Show(Configuration)
 	activate Screen
 	SeatMonitoringApplication <- Screen
 	deactivate Screen

@@ -2,7 +2,7 @@
 hide footbox
 
 participant "WebApiApplication" as WebApiApplication
-participant "Configration" as Configration
+participant "Configuration" as Configuration
 participant "Seat" as Seat
 
 note over WebApiApplication
@@ -13,24 +13,24 @@ end note
 -> WebApiApplication :Webサーバからの読み込み\nApplication_Start()
 activate WebApiApplication
 
-create Configration
-WebApiApplication -> Configration : new Configration()
-activate Configration
+create Configuration
+WebApiApplication -> Configuration : new Configuration()
+activate Configuration
 
 alt ファイル読み込みに成功
 	loop
 		create Seat
-		Configration -> Seat :new Seat(name:string, moniker:string)
+		Configuration -> Seat :new Seat(name:string, moniker:string)
 	end
 	note right
-		Configrationのコンストラクタでファイルを読み、
+		Configurationのコンストラクタでファイルを読み、
 		読み込んだ監視座席数分のインスタンスのリストを作成する
 		Seatのコンストラクタはnameとmonikerを
 		引数に受け取って初期化を行う
 	end note
 |||
 else ファイル読み込みに失敗
-	deactivate Configration
+	deactivate Configuration
 	deactivate WebApiApplication
 	note over WebApiApplication
 		アプリケーションの起動が中止される

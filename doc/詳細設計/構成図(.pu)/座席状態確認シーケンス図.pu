@@ -4,7 +4,7 @@ hide footbox
 participant "Screen" as Screen
 participant "PeriodicNotifier" as PeriodicNotifier
 
--> Screen :Show(Configration)
+-> Screen :Show(Configuration)
 Screen -> Screen :画面表示イベント 以降非同期処理
 activate Screen
 create PeriodicNotifier
@@ -13,7 +13,7 @@ note right
 	コンストラクタで通知先を登録する
 end note
 
-Screen -> PeriodicNotifier :Start(Configration)
+Screen -> PeriodicNotifier :Start(Configuration)
 activate PeriodicNotifier
 Screen <- PeriodicNotifier
 deactivate PeriodicNotifier

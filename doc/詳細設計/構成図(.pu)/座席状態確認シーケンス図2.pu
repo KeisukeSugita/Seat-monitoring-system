@@ -12,7 +12,7 @@ end box
 box "SeatMonitoringAPI"
 	participant SeatsController
 	participant SeatsApiManager
-	participant Configration
+	participant Configuration
 	participant "Seat" as ServerSeat
 	participant Camera
 	participant "HumanDetector" as CsHumanDetector
@@ -25,15 +25,15 @@ end box
 
 -> PeriodicNotifier :Start(Configratinon)
 note right
-	座席監視アプリのConfigrationクラスは
+	座席監視アプリのConfigurationクラスは
 	接続するサーバのIPアドレスをメンバに持つ
 end note
 
-PeriodicNotifier -> PeriodicNotifier : SeatMonitoringThread(Configration)\n非同期呼び出し
+PeriodicNotifier -> PeriodicNotifier : SeatMonitoringThread(Configuration)\n非同期呼び出し
 activate PeriodicNotifier
 
-note over Configration, ServerSeat
-	SeatMonitoringAPIのConfigrationクラスは
+note over Configuration, ServerSeat
+	SeatMonitoringAPIのConfigurationクラスは
 	Seatクラスのリストをメンバに持つ
 
 	Seatクラスは以下のメンバを持つ
@@ -54,10 +54,10 @@ loop stopFlagがfalseの間
 	SeatsController -> SeatsApiManager :Execute()
 	activate SeatsApiManager
 
-	SeatsApiManager -> Configration :GetSeats()
-	activate Configration
-	SeatsApiManager <- Configration :"List<ServerSeat>"
-	deactivate Configration
+	SeatsApiManager -> Configuration :GetSeats()
+	activate Configuration
+	SeatsApiManager <- Configuration :"List<ServerSeat>"
+	deactivate Configuration
 
 	|||
 	create Camera
@@ -75,7 +75,7 @@ loop stopFlagがfalseの間
 		activate ServerSeat
 		SeatsApiManager <- ServerSeat :"string"
 		deactivate ServerSeat
-		SeatsApiManager -> Camera : Shoot(Configration)
+		SeatsApiManager -> Camera : Shoot(Configuration)
 		activate Camera
 		|||
 		SeatsApiManager <- 	Camera :"Bitmap"
