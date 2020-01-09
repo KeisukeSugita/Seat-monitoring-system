@@ -2,23 +2,23 @@
 hide footbox
 
 participant "Screen" as Screen
-participant "RegularNortifier" as RegularNortifier
+participant "PeriodicNotifier" as PeriodicNotifier
 
-Screen -> Screen :closeイベント close()
+Screen -> Screen :画面終了イベント\nClose()
 activate Screen
-Screen -> RegularNortifier :stop()
-activate RegularNortifier
-Screen <- RegularNortifier
-deactivate RegularNortifier
+Screen -> PeriodicNotifier :Stop()
+activate PeriodicNotifier
+Screen <- PeriodicNotifier
+deactivate PeriodicNotifier
 deactivate Screen
 note right
-	stopFlagを立てて
+	isStopRequestedをtrueにし、
 	executeメソッドを終了させる
 end note
 note left
-	Screenのcloseメソッド終了後、
-	Screen:showメソッドが終了して画面が閉じ、
-	SeatMonitoringApplication:mainメソッドが終了する
+	ScreenのCloseメソッド終了後、
+	Screen:Showメソッドが終了して画面が閉じ、
+	SeatMonitoringApplication:Mainメソッドが終了する
 end note
 
 @enduml

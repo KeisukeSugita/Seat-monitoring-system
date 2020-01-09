@@ -1,35 +1,39 @@
 @startuml SeatMonitoringAPI起動シーケンス図
 hide footbox
 
-participant "SeatMonitoringApiController" as SeatMonitoringApiController
+participant "WebApiApplication" as WebApiApplication
 participant "Configration" as Configration
-participant "SeatInformation" as SeatInformation
+participant "Seat" as Seat
 
--> SeatMonitoringApiController :起動イベント initialize()
-activate SeatMonitoringApiController
+note over WebApiApplication
+	ASP.NETで提供されているクラス
+	Webサーバに読み込まれるときにApplication_Start()
+	メソッドで起動のための初期処理を行う
+end note
+-> WebApiApplication :Webサーバからの読み込み\nApplication_Start()
+activate WebApiApplication
 
 create Configration
-SeatMonitoringApiController -> Configration : new Configration()
+WebApiApplication -> Configration : new Configration()
 activate Configration
 
 alt ファイル読み込みに成功
 	loop
-		create SeatInformation
-		Configration -> SeatInformation :new SeatInformation(string, string)
+		create Seat
+		Configration -> Seat :new Seat(name:string, moniker:string)
 	end
 	note right
 		Configrationのコンストラクタでファイルを読み、
 		読み込んだ監視座席数分のインスタンスのリストを作成する
-		SeatInformationのコンストラクタはseatNameとmonikerを
+		Seatのコンストラクタはnameとmonikerを
 		引数に受け取って初期化を行う
 	end note
 |||
 else ファイル読み込みに失敗
-	SeatMonitoringApiController -> SeatMonitoringApiController :end()
 	deactivate Configration
-	deactivate SeatMonitoringApiController
-	note right
-		アプリケーションを終了させる
+	deactivate WebApiApplication
+	note over WebApiApplication
+		アプリケーションの起動が中止される
 	end note
 end
 

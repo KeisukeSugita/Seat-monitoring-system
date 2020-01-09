@@ -2,129 +2,136 @@
 left to right direction
 
 package 座席監視アプリ {
-    class "SeatMonitoringApplication" as SeatMonitoringApplication {
-        + main():void
+    class SeatMonitoringApplication {
+        + Main():void
     }
 
-    class "Configration" as ClientConfigration {
-		- ipAddress:string
-        + Configration()
-        - initialize():void
-        + getIpAddress():string
+    class "Configuration" as ClientConfiguration {
+		'hostnameとかendpointとか
+        - ipAddress:string 
+        + Configuration()
+        + GetIpAddress():string
     }
 
-	class "Screen" as Screen {
-        + show(Configration):void
-        + update(List<SeatStatus>):void
-		+ close():void
-        + initializeError():void
+	class Screen {
+        + Show(Configuration):void
+        - Update(List<Seat>):void
+		+ Close():void
     }
 
-    class "SeatMonitoringApiClient" as SeatMonitoringApiClient {
-        + get(Configration):List<SeatStatus>
+    class SeatMonitoringApiClient {
+        - ipAddress:string
+        + SeatMonitoringApiClient(ipAddress:string)
+        + GetSeats():List<Seat>
     }
 
-    class "RegularNortifier" as RegularNortifier {
+    class PeriodicNotifier {
         - destination:delegate
-        - stopFlag:boolean
-        + RegularNortifier(delegate)
-        + start(Configration):void
-        - execute(Configration):void
-        + stop():void
+        - isStopRequested:boolean
+        + PeriodicNotifier(destination:delegate)
+        + Start(Configuration):void
+        - SeatMonitoringTread(Configuration):void
+        + Stop():void
     }
-        note top of RegularNortifier
-            ・定期的に座席状態の更新を通知するクラス
-            ・コンストラクタで通知先を登録する
-            ・executeメソッドから1分毎に座席の状態をdestinationに通知する
-        end note
+    note top of PeriodicNotifier
+        ・定期的に座席状態の更新を通知するクラス
+        ・コンストラクタで通知先を登録する
+        ・executeメソッドから1分毎に座席の状態をdestinationに通知する
+    end note
 
-    class "SeatStatus" as SeatStatus {
-        - seatName:string
-        - humanExist:boolean
-        + SeatStatus(string, boolean)
-        - setSeatName(string):void
-        - setHumanexist(boolean):void
-        + getSeatName():string
-        + getHumanexist():boolean
+    class "Seat" as ClientSeat {
+        - name:string
+        - humanExists:boolean
+        + Seat(name:string, humanExists:boolean)
+        - SetName(string):void
+        - SetHumanExists(boolean):void
+        + GetName():string
+        + GetHumanExists():boolean
     }
 }
 
-package SeatMonitoringApi {
-    class "SeatsController" as SeatsController {
-        - configration:Configration
-        + initialize():void
-        + seats():座席情報のオブジェクト
-        + end():void
-    }
-    
-    class "Configration" as ServerConfigration {
-        - seatsInformation:List<seatInformation>
-        + Configration()
-        - initialize():void
-        + setSeatsInformation(List<seatInformation>):void
-        + getSeatsInformation():List<seatInformation>
+package SeatMonitoringAPI {
+	class SeatsController {
+        + GetSeats():string
     }
 
-    class "Photographer" as Photographer {
-        + shoot(Configration):void
+    class SeatsApiManager {
+        + Execute():List<SeatsApiResult>
     }
-        note right of Photographer
-            ・ConfigrationのListからmonikerを読み込み、
-            　そのカメラから画像を取得するクラス
-            ・取得した画像はConfigrationのListのpictureに格納する
-        end note
     
-    class "SeatInformation" as SeatInformation {
-        - seatName:string
-        - humanExist:boolean
-        - moniker:string
-        - picture:Bitmap
-        + SeatInformation(string, string)
-        - setSeatName(string):void
-        - setMoniker(string):void
-        + setHumanexist(boolean):void
-        + setPicture(Bitmap):void
-        + getSeatName():string
-        + getMoniker():string
-        + getHumanexist():boolean
-        + getPicture():Bitmap
+    class "Configuration" as ServerConfiguration {
+        - seats:List<Seat>
+        + Configuration()
+        - SetSeats(List<Seat>):void
+        + GetSeats():List<Seat>
     }
+	note right of ServerConfiguration
+		シングルトンパターンとし、ASP.NET Frameworkで
+		提供されている初期処理でインスタンス化される
+	end note
+
+    'Cameraでよくない?
+    class Camera {
+        + Shoot(moniker:string):Bitmap
+    }
+    note right of Camera
+        ・カメラから画像を取得するクラス
+        ・取得した画像はConfigurationのListのpictureに格納する
+    end note
     
     class "HumanDetector" as CsHumanDetector {
-        + execute(Configration):void
+        + Detect(Bitmap):boolean
     }
-        note right of CsHumanDetector
-            ・ConfigrationのListからpictureを読み込み、
-            　その画像に人が写っているかを判定するクラス
-            ・実際に判定を行っているのはC++のプログラム
-            　(CppDll:HumanDetector)
-            ・判定結果はConfigrationのListのhumanExistに格納する
-        end note
+    note right of CsHumanDetector
+        ・画像に人が写っているかを判定するクラス
+        ・実際に判定を行っているのはC++のプログラム
+        　(CppDll:HumanDetector)
+    end note
+
+    class "Seat" as ServerSeat {
+        - seatName:string
+        - moniker:string
+        + Seat(name:string, moniker:string)
+        - SetSeatName(string):void
+        - SetMoniker(string):void
+        + GetSeatName():string
+        + GetMoniker():string
+    }
+
+    class SeatsApiResult {
+        - name:string
+        - humanExists:boolean
+        + SeatsApiResult(name:string, humanExists:boolean)
+        - SetName(string):void
+        - SetHumanExists(boolean):void
+        + GetName():string
+        + GetHumanExists():boolean
+    }
 }
 
 package CppDll {
     class "HumanDetector" as CppHumanDetector {
-        + execute(unsigned char[]):boolean
+        + Detect(unsigned char[]):boolean
     }
 }
 
-SeatMonitoringApplication -> ClientConfigration
+SeatMonitoringApplication -> ClientConfiguration
 SeatMonitoringApplication -left-> Screen
-Screen -down-> RegularNortifier
-RegularNortifier -down-> SeatMonitoringApiClient
-RegularNortifier .> ClientConfigration
-RegularNortifier .left.> SeatStatus
-Screen .> SeatStatus
-Screen .> ClientConfigration
-SeatMonitoringApiClient .left.> ClientConfigration
-SeatMonitoringApiClient "1"-left->"0..10" SeatStatus
+Screen -down-> PeriodicNotifier
+PeriodicNotifier -down-> SeatMonitoringApiClient
+PeriodicNotifier .> ClientConfiguration
+PeriodicNotifier .left.> ClientSeat
+Screen .> ClientSeat
+Screen .> ClientConfiguration
+SeatMonitoringApiClient .left.> ClientConfiguration
+SeatMonitoringApiClient "1"-left->"0..10" ClientSeat
 SeatMonitoringApiClient -down-> SeatsController
-ServerConfigration "1"*-down-"0..10" SeatInformation
-SeatsController -> ServerConfigration
-SeatsController --> Photographer
-SeatsController --> CsHumanDetector
+SeatsController -left-> SeatsApiManager
+ServerConfiguration "1"*-down-"0..10" ServerSeat
+SeatsApiManager --> ServerConfiguration
+SeatsApiManager --> Camera
+SeatsApiManager --> CsHumanDetector
+SeatsApiManager "1"-->"0..10" SeatsApiResult
 CppHumanDetector <-- CsHumanDetector
-Photographer .> ServerConfigration
-CsHumanDetector .> ServerConfigration
 
 @enduml
