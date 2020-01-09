@@ -55,22 +55,20 @@ package SeatMonitoringAPI {
         + GetSeats():string
     }
 
-    class SeatsApiManager {
-        + Execute():List<SeatsApiResult>
+    class SeatsScanner {
+        + ScanAll():List<Seat>
     }
     
     class "Configuration" as ServerConfiguration {
-        - seats:List<Seat>
+        - seatDefinitions:List<SeatDefinition>
         + Configuration()
-        - SetSeats(List<Seat>):void
-        + GetSeats():List<Seat>
+        + GetSeatDefinitions():List<SeatDefinition>
     }
-	note right of ServerConfiguration
+	note top of ServerConfiguration
 		シングルトンパターンとし、ASP.NET Frameworkで
 		提供されている初期処理でインスタンス化される
 	end note
 
-    'Cameraでよくない?
     class Camera {
         + Shoot(moniker:string):Bitmap
     }
@@ -88,23 +86,19 @@ package SeatMonitoringAPI {
         　(CppDll:HumanDetector)
     end note
 
-    class "Seat" as ServerSeat {
+    class SeatDefinition {
         - seatName:string
         - moniker:string
         + Seat(name:string, moniker:string)
-        - SetSeatName(string):void
-        - SetMoniker(string):void
         + GetSeatName():string
         + GetMoniker():string
     }
 
-    class SeatsApiResult {
-        - name:string
+    class Seat {
+        - seatDefinition:SeatDefinition
         - humanExists:boolean
-        + SeatsApiResult(name:string, humanExists:boolean)
-        - SetName(string):void
-        - SetHumanExists(boolean):void
-        + GetName():string
+        + Seat(seatDifinition:SeatDefinition, humanExists:boolean)
+        + GetSeatDefinition():string
         + GetHumanExists():boolean
     }
 }
@@ -115,23 +109,18 @@ package CppDll {
     }
 }
 
-SeatMonitoringApplication -> ClientConfiguration
-SeatMonitoringApplication -left-> Screen
-Screen -down-> PeriodicNotifier
-PeriodicNotifier -down-> SeatMonitoringApiClient
-PeriodicNotifier .> ClientConfiguration
-PeriodicNotifier .left.> ClientSeat
-Screen .> ClientSeat
-Screen .> ClientConfiguration
-SeatMonitoringApiClient .left.> ClientConfiguration
-SeatMonitoringApiClient "1"-left->"0..10" ClientSeat
+SeatMonitoringApplication -left-> ClientConfiguration
+SeatMonitoringApplication --> Screen
+Screen -left-> PeriodicNotifier
+PeriodicNotifier --> SeatMonitoringApiClient
+SeatMonitoringApiClient -left-> ClientSeat
 SeatMonitoringApiClient -down-> SeatsController
-SeatsController -left-> SeatsApiManager
-ServerConfiguration "1"*-down-"0..10" ServerSeat
-SeatsApiManager --> ServerConfiguration
-SeatsApiManager --> Camera
-SeatsApiManager --> CsHumanDetector
-SeatsApiManager "1"-->"0..10" SeatsApiResult
+SeatsController -left-> SeatsScanner
+ServerConfiguration "1"*-down-"0..10" SeatDefinition
+SeatsScanner --> ServerConfiguration
+SeatsScanner --> Camera
+SeatsScanner --> CsHumanDetector
+SeatsScanner -left-> Seat
 CppHumanDetector <-- CsHumanDetector
 
 @enduml
