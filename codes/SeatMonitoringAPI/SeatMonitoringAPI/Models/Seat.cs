@@ -15,12 +15,12 @@ namespace SeatMonitoringAPI.Models
     public class Seat
     {
         public SeatDefinition SeatDefinition { get; private set; }  // 監視座席名、モニカ
-        public SeatStatus HumanExists { get; private set; }   // 座席状態
+        public SeatStatus Status { get; private set; }   // 座席状態
 
-        public Seat(SeatDefinition seatDefinition, SeatStatus humanExists)
+        public Seat(SeatDefinition seatDefinition, SeatStatus status)
         {
             SeatDefinition = seatDefinition;
-            HumanExists = humanExists;
+            Status = status;
         }
     }
 }
