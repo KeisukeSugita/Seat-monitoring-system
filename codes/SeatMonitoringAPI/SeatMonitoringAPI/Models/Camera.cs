@@ -9,23 +9,34 @@ using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
-    public class Camera
+    public interface ICamera
+    {
+        Bitmap Shoot();
+    }
+
+
+    public class Camera : ICamera
     {
         private Bitmap Photo { get; set; }  // 取得した画像
+        public string Moniker { get; private set; }
         private bool IsPicked = false;  // 画像を取得したかどうかを表すフラグ
+
+        public Camera(string moniker)
+        {
+            Moniker = $@"@device:pnp:\\?\{moniker}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
+        }
 
         /*
          * monikerに対応するカメラから画像を1枚取得し、Bitmap型で返すメソッド
          * string moniker:カメラのデバイスインスタンスパス
          */
-        public Bitmap Shoot(string moniker)
+        public Bitmap Shoot()
         {
-            string deviceMoniker = $@"@device:pnp:\\?\{moniker}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
             foreach (FilterInfo filterInfo in WebApiApplication.filterInfoCollection)   // 接続されているカメラのdeviceMonikerに渡されたmonikerがあるか確認
             {
-                if (filterInfo.MonikerString == deviceMoniker)
+                if (filterInfo.MonikerString == Moniker)
                 {
-                    var videoCaptureDevice = new VideoCaptureDevice(deviceMoniker);
+                    var videoCaptureDevice = new VideoCaptureDevice(Moniker);
 
                     videoCaptureDevice.NewFrame += new NewFrameEventHandler(PickFrame); // カメラが画像を取得したときに発生するイベント
 
