@@ -10,7 +10,21 @@ namespace SeatMonitoringAPI.Models
 {
     public class Configuration
     {
-        public static Configuration Instance { get; private set; }
+        private static Configuration instance = null;
+        public static Configuration Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    throw new InvalidOperationException("Configurationが初期化されていません。");
+                }
+                return instance;
+            }
+            private set
+            {
+            }
+        }
         public ReadOnlyCollection<SeatDefinition> SeatDefinitions { get; private set; }
 
         private Configuration(StreamReader streamReader)
@@ -33,9 +47,9 @@ namespace SeatMonitoringAPI.Models
             SeatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
         }
 
-        public static void initialize(StreamReader streamReader)
+        public static void Initialize(StreamReader streamReader)
         {
-            Instance = Instance == null ? new Configuration(streamReader) : throw new InvalidOperationException("Configurationは既に初期化されています。");
+            instance = instance == null ? new Configuration(streamReader) : throw new InvalidOperationException("Configurationは既に初期化されています。");
         }
     }
 }
