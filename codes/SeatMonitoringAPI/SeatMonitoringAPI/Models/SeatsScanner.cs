@@ -6,39 +6,54 @@ using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
-    public class SeatsScanner
+    public interface ISeatsScanner
     {
+        List<Seat> ScanAll();
+    }
+
+
+    public class SeatsScanner : ISeatsScanner
+    {
+        private List<ICamera> Cameras { get; set; }
+        private IHumanDetector HumanDetector { get; set; }
+
+        public SeatsScanner(List<ICamera> cameras, IHumanDetector humanDetector)
+        {
+            Cameras = cameras;
+            HumanDetector = humanDetector;
+        }
+
         public List<Seat> ScanAll()
         {
-            var camera = new Camera();
-            var humanDetector = new HumanDetector();
             var seats = new List<Seat>();
+            int seatNum = 0;
 
-            foreach (var seatDefinition in Configuration.Instance.SeatDefinitions)
+            foreach (var camera in Cameras)
             {
                 Bitmap photo = null;
-                SeatStatus humanExists;
+                SeatStatus status;
 
                 try
                 {
-                    photo = camera.Shoot(seatDefinition.Moniker);
+                    photo = camera.Shoot();
+
+                    if (HumanDetector.Detect(photo))
+                    {
+                        status = SeatStatus.Exists;
+                    }
+                    else
+                    {
+                        status = SeatStatus.NotExists;
+                    }
                 }
                 catch (InvalidOperationException)
                 {
-                    humanExists = SeatStatus.Failure;
-                    break;
+                    status = SeatStatus.Failure;
                 }
 
-                if (humanDetector.Detect(photo))
-                {
-                    humanExists = SeatStatus.Exists;
-                }
-                else
-                {
-                    humanExists = SeatStatus.NotExists;
-                }
-                
-                seats.Add(new Seat(seatDefinition, humanExists));
+                seats.Add(new Seat(Configuration.Instance.SeatDefinitions[seatNum], status));
+
+                seatNum++;
             }
 
             return seats;

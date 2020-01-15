@@ -9,17 +9,27 @@ using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
-    public class HumanDetector
+    public interface IHumanDetector
     {
-        [DllImport("HumanDetector.dll", CallingConvention = CallingConvention.StdCall)]
-        extern static bool detect(int rows, int cols, IntPtr image);
+        bool Detect(Bitmap photo);
+    }
+
+
+    public class HumanDetector : IHumanDetector
+    {
+        [DllImport("HumanDetector.dll", EntryPoint = "detect", CallingConvention = CallingConvention.Cdecl)]
+        private extern static bool Detect(int rows, int cols, IntPtr image);
         public bool Detect(Bitmap photo)
         {
             var bmpData = photo.LockBits(new Rectangle(0, 0, photo.Width, photo.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
             try
             {
-                return detect(photo.Height, photo.Width, bmpData.Scan0);
+                return Detect(photo.Height, photo.Width, bmpData.Scan0);
+            }
+            catch
+            {
+                throw new InvalidOperationException("画像の判定に失敗しました。");
             }
             finally
             {
