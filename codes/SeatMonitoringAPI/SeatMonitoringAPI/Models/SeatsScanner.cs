@@ -10,15 +10,14 @@ namespace SeatMonitoringAPI.Models
     {
         public List<Seat> ScanAll()
         {
-            Camera camera = new Camera();
-            HumanDetector humanDetector = new HumanDetector();
+            var camera = new Camera();
+            var humanDetector = new HumanDetector();
             var seats = new List<Seat>();
 
             foreach (var seatDefinition in Configuration.Instance.SeatDefinitions)
             {
                 Bitmap photo = null;
-                bool succeeded = true;
-                bool humanExists = false;
+                SeatStatus humanExists;
 
                 try
                 {
@@ -26,14 +25,20 @@ namespace SeatMonitoringAPI.Models
                 }
                 catch (InvalidOperationException)
                 {
-                    succeeded = false;
+                    humanExists = SeatStatus.Failure;
+                    break;
                 }
-                if (photo != null)
+
+                if (humanDetector.Detect(photo))
                 {
-                    humanExists = humanDetector.Detect(photo);
+                    humanExists = SeatStatus.Exists;
+                }
+                else
+                {
+                    humanExists = SeatStatus.NotExists;
                 }
                 
-                seats.Add(new Seat(seatDefinition, succeeded, humanExists));
+                seats.Add(new Seat(seatDefinition, humanExists));
             }
 
             return seats;
