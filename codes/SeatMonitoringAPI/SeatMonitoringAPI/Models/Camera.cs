@@ -11,25 +11,38 @@ namespace SeatMonitoringAPI.Models
 {
     public class Camera
     {
-        static private Bitmap Photo { get; set; }
-        static private bool isPicked = false;
+        private Bitmap Photo { get; set; }  // 取得した画像
+        private bool IsPicked = false;  // 画像を取得したかどうかを表すフラグ
+
+        /*
+         * monikerに対応するカメラから画像を1枚取得し、Bitmap型で返すメソッド
+         * string moniker:カメラのデバイスインスタンスパス
+         */
         public Bitmap Shoot(string moniker)
         {
             string deviceMoniker = $@"@device:pnp:\\?\{moniker}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
-            foreach (FilterInfo fic in WebApiApplication.filterInfoCollection)
+            foreach (FilterInfo filterInfo in WebApiApplication.filterInfoCollection)   // 接続されているカメラのdeviceMonikerに渡されたmonikerがあるか確認
             {
-                if (fic.MonikerString == deviceMoniker)
+                if (filterInfo.MonikerString == deviceMoniker)
                 {
                     var videoCaptureDevice = new VideoCaptureDevice(deviceMoniker);
 
-                    videoCaptureDevice.NewFrame += new NewFrameEventHandler(pickFrame);
+                    videoCaptureDevice.NewFrame += new NewFrameEventHandler(PickFrame); // カメラが画像を取得したときに発生するイベント
 
                     videoCaptureDevice.Start();
-                    while (!isPicked)
+                    int processingTime = 0;
+                    while (!IsPicked)
                     {
                         Thread.Sleep(10);
+                        processingTime++;
+                        if (processingTime >= 100)
+                        {
+                            throw new InvalidOperationException("画像が取得できませんでした。該当するカメラが存在しないか、接続が切断された可能性があります。");
+                        }
                     }
                     videoCaptureDevice.Stop();
+
+                    IsPicked = false;   // 次にShootが呼ばれたときに画像を取得できるよう、falseにする
 
                     return Photo;
                 }
@@ -37,13 +50,14 @@ namespace SeatMonitoringAPI.Models
             throw new InvalidOperationException("該当するカメラが存在しません。");
         }
 
-        static private void pickFrame(object sender, NewFrameEventArgs eventArgs)
+        private void PickFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            if (isPicked)
+            // 既に画像を取得していた場合は何も処理を行わない
+            if (!IsPicked)
             {
-                return;
+                Photo = new Bitmap(eventArgs.Frame);    // 取得した画像をPhotoに格納
+                IsPicked = true;    // 画像を取得したとフラグを建てる
             }
-            Photo = eventArgs.Frame;
         }
     }
 }
