@@ -5,16 +5,21 @@ using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
+    public enum SeatStatus
+    {
+        Exists,
+        NotExists,
+        Failure
+    }
+
     public class Seat
     {
         public SeatDefinition SeatDefinition { get; private set; }  // 監視座席名、モニカ
-        public bool Succeeded { get; private set; } // 状態の取得に成功したか
-        public bool HumanExists { get; private set; }   // 座席状態
+        public SeatStatus HumanExists { get; private set; }   // 座席状態
 
-        public Seat(SeatDefinition seatDefinition, bool succeeded, bool humanExists)
+        public Seat(SeatDefinition seatDefinition, SeatStatus humanExists)
         {
             SeatDefinition = seatDefinition;
-            Succeeded = succeeded;
             HumanExists = humanExists;
         }
     }
