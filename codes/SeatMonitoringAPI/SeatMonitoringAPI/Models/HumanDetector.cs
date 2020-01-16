@@ -1,26 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
-    public interface IHumanDetector
-    {
-        bool Detect(Bitmap photo);
-    }
-
-
+    /*
+     * 画像に人が写っているかを判定するクラス
+     */
     public class HumanDetector : IHumanDetector
     {
+        /*
+         * 実際に画像の判定を行っているメソッド
+         * rows：画像データの行数
+         * cols：画像データの列数
+         * image：画像データの先頭ポインタ
+         */
         [DllImport("HumanDetector.dll", EntryPoint = "detect", CallingConvention = CallingConvention.Cdecl)]
         private extern static bool Detect(int rows, int cols, IntPtr image);
+
+        /*
+         * Bitmap型からWidth、Height、画像データ部分の先頭ポインタを取り出してDllのDetectに渡し、その結果を返すメソッド
+         * photo：Bitmap型の画像データ
+         */
         public bool Detect(Bitmap photo)
         {
+            // メモリにデータをロックし、ロックした部分をBitmapData型で扱う
             var bmpData = photo.LockBits(new Rectangle(0, 0, photo.Width, photo.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
             try
@@ -33,6 +38,7 @@ namespace SeatMonitoringAPI.Models
             }
             finally
             {
+                // ロックしたメモリのアンロック
                 photo.UnlockBits(bmpData);
             }
         }

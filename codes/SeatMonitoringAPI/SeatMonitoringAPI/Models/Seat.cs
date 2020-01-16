@@ -5,13 +5,19 @@ using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
+    /*
+     * 座席の状態を表すためのEnum
+     */
     public enum SeatStatus
     {
-        Exists,
-        NotExists,
-        Failure
+        Exists, // 在席
+        NotExists,  // 離席
+        Failure // 不明
     }
 
+    /*
+     * 座席の定義に加え、座席状態も保持するクラス
+     */
     public class Seat
     {
         public SeatDefinition SeatDefinition { get; private set; }  // 監視座席名、モニカ

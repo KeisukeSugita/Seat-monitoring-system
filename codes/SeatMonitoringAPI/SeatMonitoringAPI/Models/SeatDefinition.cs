@@ -5,6 +5,9 @@ using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
+    /*
+     *座席を定義するデータを保持するクラス
+     */
     public class SeatDefinition
     {
         public string Moniker { get; private set; } // モニカ

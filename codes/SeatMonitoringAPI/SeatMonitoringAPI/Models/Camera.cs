@@ -1,20 +1,15 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
-using System.Web;
 
 namespace SeatMonitoringAPI.Models
 {
-    public interface ICamera
-    {
-        Bitmap Shoot();
-    }
-
-
+    /*
+     * 指定したMonikerに対応するカメラのクラス
+     * コンストラクタでMonikerを指定する
+     */
     public class Camera : ICamera
     {
         private Bitmap Photo { get; set; }  // 取得した画像
