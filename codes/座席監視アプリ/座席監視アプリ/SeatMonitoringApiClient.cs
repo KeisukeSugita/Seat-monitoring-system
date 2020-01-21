@@ -22,39 +22,38 @@ namespace SeatMonitoringApplication
         {
             using (var httpClient = new HttpClient())
             {
-                var responseMessage = httpClient.GetAsync($@"https://{IpAddress}:44383/api/seats").Result;
-                if(responseMessage.StatusCode == HttpStatusCode.OK)
+                try
                 {
+                    var responseMessage = httpClient.GetAsync($@"http://{IpAddress}:44383/api/seats").Result;
+                    if (responseMessage.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new InvalidOperationException("サーバへの接続に失敗しました。");
+                    }
+
                     var responseBody = responseMessage.Content.ReadAsStringAsync().Result;
                     var seatsResponse = JsonConvert.DeserializeObject<dynamic>(responseBody);
 
                     var seatsResult = new List<Seat>();
                     foreach (var seat in seatsResponse)
                     {
-                        string name = seat.Name;
-                        Seat.SeatStatus status;
-                        if (seat.Status == "Exists")
-                        {
-                            status = Seat.SeatStatus.Exists;
-                        }
-                        else if (seat.Status == "NotExists")
-                        {
-                            status = Seat.SeatStatus.NotExists;
-                        }
-                        else
-                        {
-                            status = Seat.SeatStatus.Failure;
-                        }
-
-                        seatsResult.Add(new Seat(name, status));
+                        seatsResult.Add(new Seat((string)seat.Name, (string)seat.Status));
                     }
-
                     return seatsResult;
                 }
-                else
+                catch(HttpRequestException e)
                 {
-                    throw new NotImplementedException();
+                    throw new HttpRequestException("サーバへの接続に失敗しました。");
                 }
+                catch (WebException e)
+                {
+                    throw new WebException("サーバへの接続に失敗しました。");
+                }
+
+                //var seatsResult = JsonConvert.DeserializeObject<dynamic>(responseBody)
+                //    .Select(seat => new Seat(seat.Name, Seat.FromString(seat.Status))
+                //    .ToList();
+
+
             }
 
         }
