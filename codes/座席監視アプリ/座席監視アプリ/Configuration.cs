@@ -20,15 +20,16 @@ namespace SeatMonitoringApplication
                 }
                 return instance;
             }
-            private set
-            {
-            }
         }
         public string IpAddress { get; private set; }
 
         public Configuration()
         {
             IpAddress = ConfigurationManager.AppSettings["IpAddress"];
+            if (IpAddress == null)
+            {
+                throw new InvalidOperationException("\"IpAddress\"が見つかりません。");
+            }
         }
     }
 }
