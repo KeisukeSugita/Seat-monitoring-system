@@ -6,12 +6,12 @@ using System.IO;
 
 namespace SeatMonitoringAPI.Models
 {
-    /*
-     * 初期化処理が必要なシングルトンクラス
-     * キーに「Moniker」と「Name」が存在するJson形式のStreamをInitializeメソッドに渡して初期化する
-     * 初期化は1度のみ可能で、2度目の初期化には例外を発生する
-     * 初期化されていない状態でInstanceをGetすると例外を発生する
-     */
+     /// <summary>
+     /// 初期化処理が必要なシングルトンクラス
+     /// キーに「Moniker」と「Name」が存在するJson形式のStreamをInitializeメソッドに渡して初期化する
+     /// 初期化は1度のみ可能で、2度目の初期化には例外を発生する
+     /// 初期化されていない状態でInstanceをGetすると例外を発生する
+     /// </summary>
     public class Configuration
     {
         private static Configuration instance = null;
@@ -31,9 +31,10 @@ namespace SeatMonitoringAPI.Models
         }
         public ReadOnlyCollection<SeatDefinition> SeatDefinitions { get; private set; }
 
-        /*
-         * Json形式のStreamをSeatDefinition型のListに変換してInstanseプロパティに代入するコンストラクタ
-         */
+        /// <summary>
+        /// Json形式のStreamをSeatDefinition型のListに変換してInstanseプロパティに代入するコンストラクタ
+        /// </summary>
+        /// <param name="streamReader"></param>
         private Configuration(StreamReader streamReader)
         {
             dynamic jsonObj;
@@ -48,32 +49,33 @@ namespace SeatMonitoringAPI.Models
                 throw new InvalidOperationException("Json形式ではないファイルが読み込まれました。");
             }
 
-                var seatDefinitions = new List<SeatDefinition>();
-                int objNum = 0;
-                foreach(var jsonObjElement in jsonObj)
+            var seatDefinitions = new List<SeatDefinition>();
+            int objNum = 0;
+            foreach(var jsonObjElement in jsonObj)
+            {
+                string moniker = jsonObjElement.Moniker;
+                string name = jsonObjElement.Name;
+
+                if (moniker == null || name == null)
                 {
-                    string moniker = jsonObjElement.Moniker;
-                    string name = jsonObjElement.Name;
-
-                    if (moniker == null || name == null)
-                    {
-                        throw new InvalidOperationException("Jsonファイルのキーが不正です。");
-                    }
-
-                    seatDefinitions.Add(new SeatDefinition(moniker, name));
-                    objNum++;
-                    if (objNum == 10)
-                    {
-                        break;
-                    }
+                    throw new InvalidOperationException("Jsonファイルのキーが不正です。");
                 }
-                SeatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
+
+                seatDefinitions.Add(new SeatDefinition(moniker, name));
+                objNum++;
+                if (objNum == 10)
+                {
+                    break;
+                }
+            }
+            SeatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
         }
 
-        /*
-         * 初期化用メソッド
-         * Streamを受け取って自身のコンストラクタを呼び出し、インスタンスを作成する
-         */
+        /// <summary>
+        /// 初期化用メソッド
+        /// Streamを受け取って自身のコンストラクタを呼び出し、インスタンスを作成する
+        /// </summary>
+        /// <param name="streamReader"></param>
         public static void Initialize(StreamReader streamReader)
         {
             instance = instance == null ? new Configuration(streamReader) : throw new InvalidOperationException("Configurationは既に初期化されています。");

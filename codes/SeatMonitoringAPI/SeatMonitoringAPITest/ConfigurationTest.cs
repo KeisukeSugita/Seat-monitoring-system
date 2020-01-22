@@ -9,7 +9,9 @@ namespace SeatMonitoringAPITest
     [TestClass]
     public class ConfigurationTest
     {
-        // Configurationが初期化されていない状態でInstanseプロパティをGetしたとき、例外が発生する
+        /// <summary>
+        /// Configurationが初期化されていない状態でInstanseプロパティをGetしたとき、例外が発生する
+        /// </summary>
         [TestMethod]
         public void GetInstance_YetCallInitialize_ExceptionThrow()
         {

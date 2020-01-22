@@ -5,24 +5,31 @@ using System.Runtime.InteropServices;
 
 namespace SeatMonitoringAPI.Models
 {
-    /*
-     * 画像に人が写っているかを判定するクラス
-     */
+    /// <summary>
+    /// 画像に人が写っているかを判定するクラス
+    /// </summary>
     public class HumanDetector : IHumanDetector
     {
-        /*
-         * 実際に画像の判定を行っているメソッド
-         * rows：画像データの行数
-         * cols：画像データの列数
-         * image：画像データの先頭ポインタ
-         */
+        /// <summary>
+        /// 実際に画像の判定を行っているメソッド
+        /// rows：画像データの行数
+        /// cols：画像データの列数
+        /// image：画像データの先頭ポインタ
+        /// 
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <param name="cols"></param>
+        /// <param name="image"></param>
+        /// <returns>判定結果</returns>
         [DllImport("HumanDetector.dll", EntryPoint = "detect", CallingConvention = CallingConvention.Cdecl)]
         private extern static bool Detect(int rows, int cols, IntPtr image);
 
-        /*
-         * Bitmap型からWidth、Height、画像データ部分の先頭ポインタを取り出してDllのDetectに渡し、その結果を返すメソッド
-         * photo：Bitmap型の画像データ
-         */
+        /// <summary>
+        /// Bitmap型からWidth、Height、画像データ部分の先頭ポインタを取り出してDllのDetectに渡し、その結果を返すメソッド
+        /// photo：Bitmap型の画像データ
+        /// </summary>
+        /// <param name="photo"></param>
+        /// <returns>判定結果</returns>
         public bool Detect(Bitmap photo)
         {
             // メモリにデータをロックし、ロックした部分をBitmapData型で扱う

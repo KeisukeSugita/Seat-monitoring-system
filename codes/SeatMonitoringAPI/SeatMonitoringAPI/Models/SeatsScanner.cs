@@ -4,10 +4,10 @@ using System.Drawing;
 
 namespace SeatMonitoringAPI.Models
 {
-    /*
-     * 初期化されたConfigurationのSeatDefinitionsのすべての座席に対して座席の状態を取得し、
-     * Seat型のリストを作成するクラス
-     */
+    /// <summary>
+    /// 初期化されたConfigurationのSeatDefinitionsのすべての座席に対して座席の状態を取得し、
+    /// Seat型のリストを作成するクラス
+    /// </summary>
     public class SeatsScanner : ISeatsScanner
     {
         private List<ICamera> Cameras { get; set; } // カメラから画像を取得するためのICameraのList
@@ -19,10 +19,11 @@ namespace SeatMonitoringAPI.Models
             HumanDetector = humanDetector;
         }
 
-        /*
-         * Cameras内のすべてのCameraインスタンスから画像を取得してそれぞれの画像を判定し
-         * ConfigurationのSeatDefinitionsと対応する判定結果をList<Seat>にして返すメソッド
-         */
+        /// <summary>
+        /// Cameras内のすべてのCameraインスタンスから画像を取得してそれぞれの画像を判定し
+        /// ConfigurationのSeatDefinitionsと対応する判定結果をList<Seat>にして返すメソッド
+        /// </summary>
+        /// <returns>監視座席名と判定結果を対応させたリスト</returns>
         public List<Seat> ScanAll()
         {
             var seats = new List<Seat>();
