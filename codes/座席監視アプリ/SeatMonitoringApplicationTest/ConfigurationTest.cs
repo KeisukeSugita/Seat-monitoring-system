@@ -15,7 +15,7 @@ namespace SeatMonitoringApplicationTest
         [TestMethod]
         public void TestMethod1()
         {
-            Assert.AreEqual("localhost", Configuration.Instance.IpAddress);
+            Assert.AreEqual("testAddress", Configuration.Instance.IpAddress);
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace SeatMonitoringApplicationTest
         public void TestMethod2()
         {
             var ipAddress = Configuration.Instance.IpAddress;
-            Assert.AreEqual("localhost", Configuration.Instance.IpAddress);
+            Assert.AreEqual("testAddress", Configuration.Instance.IpAddress);
         }
 
         /// <summary>
