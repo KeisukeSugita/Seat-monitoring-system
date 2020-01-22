@@ -11,14 +11,15 @@ namespace SeatMonitoringApplication
     public class PeriodicNotifier : IPeriodicNotifier
     {
         public delegate void Destination(List<Seat> seats, bool isSucceeded);
-        private SeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
+        private ISeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
         private Destination destination;
-        private bool isStopRequested = false;
+        public bool IsStopRequested { get; private set; }
 
-        public PeriodicNotifier(Destination destination, SeatMonitoringApiClient seatMonitoringApiClient)
+        public PeriodicNotifier(Destination destination, ISeatMonitoringApiClient seatMonitoringApiClient)
         {
             this.destination = destination;
             SeatMonitoringApiClient = seatMonitoringApiClient;
+            IsStopRequested = false;
         }
 
         public void Start()
@@ -26,7 +27,7 @@ namespace SeatMonitoringApplication
             Task.Run(() =>
             {
                 var stopwatch = new Stopwatch();
-                while (!isStopRequested)
+                while (!IsStopRequested)
                 {
                     stopwatch.Start();
                     List<Seat> seats = null;
@@ -51,7 +52,7 @@ namespace SeatMonitoringApplication
 
         public void Stop()
         {
-            isStopRequested = true;
+            IsStopRequested = true;
         }
     }
 }
