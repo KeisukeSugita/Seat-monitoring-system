@@ -23,11 +23,24 @@ namespace SeatMonitoringApplication
         public List<Seat> GetSeats()
         {
             HttpResponseMessage responseMessage;
-            HttpClient.Timeout = TimeSpan.FromMilliseconds(60000);
-            responseMessage = HttpClient.GetAsync($@"http://{IpAddress}:44383/api/seats");
+            try
+            {
+                HttpClient.Timeout = TimeSpan.FromMilliseconds(60000);
+                responseMessage = HttpClient.GetAsync($@"http://{IpAddress}:44383/api/seats");
+                
+            }
+            catch (TaskCanceledException)
+            {
+                throw new SeatsApiException("接続がタイムアウトしました。");
+            }
+            catch (AggregateException)
+            {
+                throw new SeatsApiException("サーバへの接続に失敗しました。");
+            }
+            
             if (responseMessage.StatusCode != HttpStatusCode.OK)
             {
-                throw new AggregateException("サーバへの接続に失敗しました。");
+                throw new SeatsApiException($@"ステータスコード""{(int)responseMessage.StatusCode}""で失敗しました。");
             }
 
             var responseBody = responseMessage.Content.ReadAsStringAsync().Result;
