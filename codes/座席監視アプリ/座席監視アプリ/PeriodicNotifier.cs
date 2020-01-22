@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SeatMonitoringApplication
 {
-    public class PeriodicNotifier
+    public class PeriodicNotifier : IPeriodicNotifier
     {
         public delegate void Destination(List<Seat> seats);
         private SeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
@@ -23,20 +23,33 @@ namespace SeatMonitoringApplication
 
         public void Start()
         {
-            while(!isStopRequested)
+            Task.Run(() =>
             {
                 var stopwatch = new Stopwatch();
-                Task task = new Task(() =>
+                while (!isStopRequested)
                 {
                     stopwatch.Start();
-                    destination(SeatMonitoringApiClient.GetSeats());
-                    stopwatch.Stop();
-                    if (60.0 > stopwatch.ElapsedMilliseconds)
+
+                    try
                     {
-                        Thread.Sleep((int)(60 - stopwatch.ElapsedMilliseconds) * 100);
+                        destination(SeatMonitoringApiClient.GetSeats());
                     }
-                });
-            }
+                    catch(AggregateException)
+                    {
+                        destination(null);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        destination(null);
+                    }
+
+                    stopwatch.Stop();
+                    if (60000 > stopwatch.ElapsedMilliseconds)
+                    {
+                        Thread.Sleep((int)(60000 - stopwatch.ElapsedMilliseconds));
+                    }
+                }
+            });
         }
 
         public void Stop()
