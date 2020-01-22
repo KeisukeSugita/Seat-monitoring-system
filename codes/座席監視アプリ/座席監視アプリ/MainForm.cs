@@ -38,18 +38,9 @@ namespace SeatMonitoringApplication
         private PeriodicNotifier PeriodicNotifier { get; set; }
         public MainForm()
         {
-            try
-            {
-                var ipAddress = Configuration.Instance.IpAddress;
-                PeriodicNotifier.Destination destination = Update;
-                PeriodicNotifier = new PeriodicNotifier(destination, new SeatMonitoringApiClient(ipAddress, new MyHttpClient()));
-            }
-            catch (InvalidOperationException e)
-            {
-                MessageBox.Show(e.Message, "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Environment.Exit(0);
-            }
-
+            var ipAddress = Configuration.Instance.IpAddress;
+            PeriodicNotifier.Destination destination = Update;
+            PeriodicNotifier = new PeriodicNotifier(destination, new SeatMonitoringApiClient(ipAddress, new MyHttpClient()));
             InitializeComponent();
         }
 
