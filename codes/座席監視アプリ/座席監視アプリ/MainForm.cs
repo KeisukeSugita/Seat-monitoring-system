@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace SeatMonitoringApplication
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private enum ToolTipTexts
         {
@@ -36,7 +36,7 @@ namespace SeatMonitoringApplication
         }
 
         private PeriodicNotifier PeriodicNotifier { get; set; }
-        public Form1()
+        public MainForm()
         {
             try
             {
@@ -60,16 +60,16 @@ namespace SeatMonitoringApplication
             PeriodicNotifier.Start();
         }
 
-        private void Update(List<Seat> seats)
+        private void Update(List<Seat> seats, bool isSucceeded)
         {
-            Invoke(new Action<List<Seat>>(InvokeUpdate), seats);
+            Invoke(new Action<List<Seat>, bool>(InvokeUpdate), seats, isSucceeded);
         }
 
-        private void InvokeUpdate(List<Seat> seats)
+        private void InvokeUpdate(List<Seat> seats, bool isSucceeded)
         {
             listView1.Items.Clear();
 
-            if (seats == null)
+            if (!isSucceeded)
             {
                 listView1.Items.Add(
                     new ListViewItem("サーバへの接続に失敗しました。")
