@@ -10,7 +10,7 @@ namespace SeatMonitoringApplication
 {
     public class PeriodicNotifier : IPeriodicNotifier
     {
-        public delegate void Destination(List<Seat> seats);
+        public delegate void Destination(List<Seat> seats, bool isSucceeded);
         private SeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
         private Destination destination;
         private bool isStopRequested = false;
@@ -29,18 +29,15 @@ namespace SeatMonitoringApplication
                 while (!isStopRequested)
                 {
                     stopwatch.Start();
-
+                    List<Seat> seats = null;
                     try
                     {
-                        destination(SeatMonitoringApiClient.GetSeats());
+                        seats = SeatMonitoringApiClient.GetSeats();
+                        destination(seats, true);
                     }
-                    catch(AggregateException)
+                    catch(SeatsApiException)
                     {
-                        destination(null);
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        destination(null);
+                        destination(seats, false);
                     }
 
                     stopwatch.Stop();
