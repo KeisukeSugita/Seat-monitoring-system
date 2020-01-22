@@ -9,9 +9,6 @@ namespace SeatMonitoringApplication
 {
     public class Seat
     {
-        private object name;
-        private SeatStatus seatStatus;
-
         public enum SeatStatus
         {
             Exists,
