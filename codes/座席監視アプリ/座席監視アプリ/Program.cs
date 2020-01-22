@@ -16,7 +16,14 @@ namespace SeatMonitoringApplication
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch(InvalidOperationException e)
+            {
+                MessageBox.Show(e.Message, "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
