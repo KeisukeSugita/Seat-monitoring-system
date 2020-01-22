@@ -41,7 +41,7 @@ namespace SeatMonitoringAPITest
             seatsScannerMock.Setup(x => x.ScanAll()).Returns(seats);
 
             var seatsController = new SeatsController(seatsScannerMock.Object);
-            var seatsResults = seatsController.GetSeats();
+            var seatsResults = seatsController.GetSeats().Content.ReadAsStringAsync().Result;
 
             Assert.AreEqual(@"[{""Name"":""杉田 圭輔"",""Status"":""Exists""},{""Name"":""Keisuke Sugita"",""Status"":""NotExists""},{""Name"":""スギタ ケイスケ"",""Status"":""Failure""}]", seatsResults);
         }
