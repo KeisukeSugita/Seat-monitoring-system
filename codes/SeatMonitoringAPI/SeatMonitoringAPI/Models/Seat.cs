@@ -8,7 +8,7 @@ namespace SeatMonitoringAPI.Models
     /// <summary>
     /// 座席の状態を表すためのEnum
     /// </summary>
-    public enum SeatStatus
+    public enum SeatState
     {
         Exists, // 在席
         NotExists,  // 離席
@@ -21,9 +21,9 @@ namespace SeatMonitoringAPI.Models
     public class Seat
     {
         public readonly SeatDefinition seatDefinition;  // 監視座席名、モニカ
-        public readonly SeatStatus status;   // 座席状態
+        public readonly SeatState status;   // 座席状態
 
-        public Seat(SeatDefinition seatDefinition, SeatStatus status)
+        public Seat(SeatDefinition seatDefinition, SeatState status)
         {
             this.seatDefinition = seatDefinition;
             this.status = status;

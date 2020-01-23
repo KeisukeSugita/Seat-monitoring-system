@@ -32,7 +32,7 @@ namespace SeatMonitoringAPI.Models
             foreach (var camera in cameras)
             {
                 Bitmap photo;
-                SeatStatus status;
+                SeatState status;
 
                 try
                 {
@@ -40,11 +40,11 @@ namespace SeatMonitoringAPI.Models
                     photo = camera.Shoot();
 
                     // 画像に人が写っているか判定
-                    status = humanDetector.Detect(photo) ? SeatStatus.Exists : SeatStatus.NotExists;
+                    status = humanDetector.Detect(photo) ? SeatState.Exists : SeatState.NotExists;
                 }
                 catch (InvalidOperationException)
                 {
-                    status = SeatStatus.Failure;
+                    status = SeatState.Failure;
                 }
 
                 // SeatクラスのインスタンスをListに追加
