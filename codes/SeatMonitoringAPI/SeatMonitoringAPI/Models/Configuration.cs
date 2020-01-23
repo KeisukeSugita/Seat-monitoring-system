@@ -25,9 +25,6 @@ namespace SeatMonitoringAPI.Models
                 }
                 return instance;
             }
-            private set
-            {
-            }
         }
         public readonly ReadOnlyCollection<SeatDefinition> seatDefinitions;
 
