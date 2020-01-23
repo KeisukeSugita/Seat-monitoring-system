@@ -14,7 +14,6 @@ namespace SeatMonitoringAPI.Models
     {
         private Bitmap Photo { get; set; }  // 取得した画像
         public readonly string moniker;
-        private bool IsPicked = false;  // 画像を取得したかどうかを表すフラグ
 
         public Camera(string moniker)
         {
@@ -28,6 +27,7 @@ namespace SeatMonitoringAPI.Models
         /// <returns>取得した画像データ</returns>
         public Bitmap Shoot()
         {
+            Photo = null;
             bool cameraIsExists = false;
             foreach (FilterInfo filterInfo in WebApiApplication.filterInfoCollection)   // 接続されているカメラのdeviceMonikerに渡されたmonikerがあるか確認
             {
@@ -50,7 +50,7 @@ namespace SeatMonitoringAPI.Models
             // 該当カメラが存在しなくてもエラーが発生しないため、時間経過で例外をスローする
             int processingTime = 0;
             // 画像が取得できるまでのループ
-            while (!IsPicked)
+            while (Photo == null)
             {
                 Thread.Sleep(10);
                 processingTime++;
@@ -60,8 +60,6 @@ namespace SeatMonitoringAPI.Models
                 }
             }
             videoCaptureDevice.Stop();
-
-            IsPicked = false;   // 次にShootが呼ばれたときに画像を取得できるよう、falseにする
 
             return Photo;
         }
@@ -74,10 +72,9 @@ namespace SeatMonitoringAPI.Models
         private void PickFrame(object sender, NewFrameEventArgs eventArgs)
         {
             // 既に画像を取得していた場合は何も処理を行わない
-            if (!IsPicked)
+            if (Photo == null)
             {
                 Photo = new Bitmap(eventArgs.Frame);    // 取得した画像をPhotoに格納
-                IsPicked = true;    // 画像を取得したとフラグを建てる
             }
         }
     }
