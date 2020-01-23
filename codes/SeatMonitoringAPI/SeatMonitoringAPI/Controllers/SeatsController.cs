@@ -52,6 +52,7 @@ namespace SeatMonitoringAPI.Controllers
 
             return new HttpResponseMessage()
             {
+                // JSON形式の文字列を固定で返す
                 Content = new StringContent(
                     Newtonsoft.Json.JsonConvert.SerializeObject(result),
                     Encoding.UTF8,

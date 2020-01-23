@@ -50,6 +50,7 @@ namespace SeatMonitoringAPI.Models
             }
 
             var seatDefinitions = new List<SeatDefinition>();
+            // 登録数のカウンタ
             int objNum = 0;
             foreach(var jsonObjElement in jsonObj)
             {

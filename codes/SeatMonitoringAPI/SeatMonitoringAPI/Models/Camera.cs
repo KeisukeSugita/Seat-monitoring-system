@@ -37,7 +37,10 @@ namespace SeatMonitoringAPI.Models
                     videoCaptureDevice.NewFrame += new NewFrameEventHandler(PickFrame); // カメラが画像を取得したときに発生するイベント
 
                     videoCaptureDevice.Start();
+
+                    // 該当カメラが存在しなくてもエラーが発生しないため、時間経過で例外をスローする
                     int processingTime = 0;
+                    // 画像が取得できるまでのループ
                     while (!IsPicked)
                     {
                         Thread.Sleep(10);
