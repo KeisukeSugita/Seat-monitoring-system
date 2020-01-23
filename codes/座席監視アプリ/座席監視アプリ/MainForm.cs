@@ -12,6 +12,9 @@ namespace SeatMonitoringApplication
 {
     public partial class MainForm : Form
     {
+        /// <summary>
+        /// ToolTipで表示するテキストのenum
+        /// </summary>
         public enum ToolTipTexts
         {
             [Description("在席")]
@@ -27,6 +30,11 @@ namespace SeatMonitoringApplication
             ConectingError
         }
 
+        /// <summary>
+        /// ToolTipTextsから表示名を取得して返すメソッド
+        /// </summary>
+        /// <param name="toolTipText"></param>
+        /// <returns>対応する表示名</returns>
         public string GetText(ToolTipTexts toolTipText)
         {
             var member = toolTipText.GetType().GetMember(toolTipText.ToString());
@@ -44,6 +52,10 @@ namespace SeatMonitoringApplication
             InitializeComponent();
         }
 
+        /// <summary>
+        /// テスト用コンストラクタ
+        /// </summary>
+        /// <param name="periodicNotifier"></param>
         public MainForm(IPeriodicNotifier periodicNotifier)
         {
             PeriodicNotifier = periodicNotifier;
@@ -57,17 +69,30 @@ namespace SeatMonitoringApplication
             PeriodicNotifier.Start();
         }
 
+        /// <summary>
+        /// 画面を更新するメソッド
+        /// UIスレッドで更新を行いたいため、InvokeUpdateメソッドをInvokeで呼び出す
+        /// </summary>
+        /// <param name="seats"></param>
+        /// <param name="isSucceeded"></param>
         private void Update(List<Seat> seats, bool isSucceeded)
         {
             Invoke(new Action<List<Seat>, bool>(InvokeUpdate), seats, isSucceeded);
         }
 
+        /// <summary>
+        /// Updateメソッドから呼ばれるメソッド
+        /// 画面の更新そのものはこのメソッドで行う
+        /// </summary>
+        /// <param name="seats"></param>
+        /// <param name="isSucceeded"></param>
         private void InvokeUpdate(List<Seat> seats, bool isSucceeded)
         {
             listView1.Items.Clear();
 
             if (!isSucceeded)
             {
+                // サーバ接続エラーを表す項目をListViewに追加する
                 listView1.Items.Add(
                     new ListViewItem("サーバへの接続に失敗しました。")
                     {
@@ -78,6 +103,7 @@ namespace SeatMonitoringApplication
             }
             else
             {
+                // seatsのデータをListViewの項目に追加する
                 listView1.Items.AddRange(
                     seats.Select(seat => new ListViewItem(seat.Name)
                     {
@@ -89,6 +115,13 @@ namespace SeatMonitoringApplication
             }
         }
 
+        /// <summary>
+        /// FormClosedイベントで呼ばれるメソッド
+        /// 非同期で行っているPeriodicNotifierクラスの処理を終了させるため、
+        /// PeriodicNotifier.Stopメソッドを呼び出す
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void Close(object sender, EventArgs e)
         {
             PeriodicNotifier.Stop();

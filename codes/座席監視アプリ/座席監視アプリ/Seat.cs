@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SeatMonitoringApplication
 {
+    /// <summary>
+    /// 座席の名前と状態を保持するクラス
+    /// </summary>
     public class Seat
     {
         public enum SeatStatus
@@ -34,6 +37,12 @@ namespace SeatMonitoringApplication
             Status = FromString(status);
         }
 
+        /// <summary>
+        /// 該当する文字列をenum SeatStatusに変換するクラス
+        /// status：enum SeatStatusに該当する文字列
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns>変換されたenum SeatStatusの値</returns>
         public SeatStatus FromString(string status)
         {
             if (status == Seat.SeatStatus.Exists.ToString())

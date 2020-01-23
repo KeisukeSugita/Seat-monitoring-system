@@ -22,6 +22,7 @@ namespace SeatMonitoringApplication
             }
             catch(InvalidOperationException e)
             {
+                // IPアドレスを読み込めなかった場合
                 MessageBox.Show(e.Message, "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace SeatMonitoringApplication
 {
+    /// <summary>
+    /// アプリの設定を保持するシングルトンクラス
+    /// 初めてgetが行われたときに値が初期化される
+    /// </summary>
     public class Configuration
     {
         private static Configuration instance = null;
