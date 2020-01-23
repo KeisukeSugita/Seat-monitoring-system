@@ -12,7 +12,7 @@ namespace SeatMonitoringApplication
 {
     public partial class MainForm : Form
     {
-        private enum ToolTipTexts
+        public enum ToolTipTexts
         {
             [Description("在席")]
             Exist,
@@ -27,7 +27,7 @@ namespace SeatMonitoringApplication
             ConectingError
         }
 
-        private string GetText(ToolTipTexts toolTipText)
+        public string GetText(ToolTipTexts toolTipText)
         {
             var member = toolTipText.GetType().GetMember(toolTipText.ToString());
             var attributes = member[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
@@ -35,12 +35,18 @@ namespace SeatMonitoringApplication
             return description;
         }
 
-        private PeriodicNotifier PeriodicNotifier { get; set; }
+        private IPeriodicNotifier PeriodicNotifier { get; set; }
         public MainForm()
         {
             var ipAddress = Configuration.Instance.IpAddress;
             PeriodicNotifier.Destination destination = Update;
             PeriodicNotifier = new PeriodicNotifier(destination, new SeatMonitoringApiClient(ipAddress, new MyHttpClient()));
+            InitializeComponent();
+        }
+
+        public MainForm(IPeriodicNotifier periodicNotifier)
+        {
+            PeriodicNotifier = periodicNotifier;
             InitializeComponent();
         }
 
