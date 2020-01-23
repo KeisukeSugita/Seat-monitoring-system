@@ -47,7 +47,7 @@ namespace SeatMonitoringAPI.Models
 
                 if (moniker == null || name == null)
                 {
-                    throw new InvalidOperationException("Jsonファイルのキーが不正です。");
+                    throw new JsonSerializationException("Jsonファイルのキーが不正です。");
                 }
 
                 seatDefinitions.Add(new SeatDefinition(moniker, name));
