@@ -11,12 +11,13 @@ end box
 
 box "SeatMonitoringAPI"
 	participant SeatsController
-	participant SeatsApiManager
+	participant SeatsScanner
 	participant Configuration
 	participant "Seat" as ServerSeat
 	participant Camera
 	participant "HumanDetector" as CsHumanDetector
-	participant SeatsApiResult
+	participant Seat
+	participant SeatsResult
 end box
 
 box "CppDll"
@@ -34,9 +35,9 @@ activate PeriodicNotifier
 
 note over Configuration, ServerSeat
 	SeatMonitoringAPIのConfigurationクラスは
-	Seatクラスのリストをメンバに持つ
+	SeatDefinitionクラスのリストをメンバに持つ
 
-	Seatクラスは以下のメンバを持つ
+	SeatDefinitionクラスは以下のメンバを持つ
 	・name(監視座席名)
 	・moniker(モニカ(デバイスインスタンスパス))
 end note
@@ -51,67 +52,71 @@ loop stopFlagがfalseの間
 	SeatMonitoringApiClient -> SeatsController : GetSeats() [HTTPリクエスト]
 	activate SeatsController
 
-	SeatsController -> SeatsApiManager :Execute()
-	activate SeatsApiManager
+	SeatsController -> SeatsScanner :Execute()
+	activate SeatsScanner
 
-	SeatsApiManager -> Configuration :GetSeats()
+	SeatsScanner -> Configuration :GetSeats()
 	activate Configuration
-	SeatsApiManager <- Configuration :"List<ServerSeat>"
+	SeatsScanner <- Configuration :"List<SeatDefinition>"
 	deactivate Configuration
 
 	|||
-	create Camera
-	SeatsApiManager -> Camera : new
 
 	create CsHumanDetector
-	SeatsApiManager -> CsHumanDetector :new
+	SeatsScanner -> CsHumanDetector :new
 
 	create CppHumanDetector
-	SeatsApiManager -> CppHumanDetector :new
+	SeatsScanner -> CppHumanDetector :new
 
 
 	loop 監視座席数
-		SeatsApiManager -> ServerSeat :GetMoniker()
-		activate ServerSeat
-		SeatsApiManager <- ServerSeat :"string"
-		deactivate ServerSeat
-		SeatsApiManager -> Camera : Shoot(Configuration)
+		create Camera
+		SeatsScanner -> Camera : new Camera(moniker:string)
+		SeatsScanner -> Camera : Shoot()
 		activate Camera
 		|||
-		SeatsApiManager <- 	Camera :"Bitmap"
+		SeatsScanner <- 	Camera :"Bitmap"
 		deactivate Camera
 		note right
 			monikerでカメラを指定して画像を取得する
 		end note
 
-		SeatsApiManager -> CsHumanDetector :Detect(Bitmap)
+		SeatsScanner -> CsHumanDetector :Detect(Bitmap)
 		activate CsHumanDetector
 		CsHumanDetector -> CppHumanDetector : Detect(unsigned char[])
 		activate CppHumanDetector
 		CsHumanDetector <- CppHumanDetector : "boolean"
 		deactivate CppHumanDetector
-		SeatsApiManager <- CsHumanDetector :"boolean"
+		SeatsScanner <- CsHumanDetector :"boolean"
 		deactivate CsHumanDetector
 		note right
 			画像に人が写っているかを判定する
 		end note
 
-		SeatsApiManager -> ServerSeat :GetName()
+		SeatsScanner -> ServerSeat :GetName()
 		activate ServerSeat
-		SeatsApiManager <- ServerSeat :"string"
+		SeatsScanner <- ServerSeat :"string"
 		deactivate ServerSeat
 		
-		create SeatsApiResult
-		SeatsApiManager -> SeatsApiResult :new SeatsApiResult(name:string, humanExists:boolean)
+		create Seat
+		SeatsScanner -> Seat :new Seat(seatDefinition:SeatDefinition, humanExists:boolean, secceeded:boolean)
 		
 	end
 	note over Camera
-		List<SeatsApiResult>(監視座席名と画像の判定結果のリスト)を作成する
+		List<Seat>(監視座席名と画像の判定結果のリスト)を作成する
 	end note
 	|||
 
-	SeatsController <- SeatsApiManager : List<SeatsApiResult>
-	deactivate SeatsApiManager
+	SeatsController <- SeatsScanner : List<Seat>
+	deactivate SeatsScanner
+
+	loop 監視座席数
+		create SeatsResult
+		SeatsController -> SeatsResult :new Seat(name:string, humanExists:boolean, succeeded:boolean)
+	end
+	note over Camera
+		List<SeatsResult>(監視座席名と画像の判定結果のリスト)を作成する
+	end note
 
 	SeatMonitoringApiClient <- SeatsController :srting
 	deactivate SeatsController

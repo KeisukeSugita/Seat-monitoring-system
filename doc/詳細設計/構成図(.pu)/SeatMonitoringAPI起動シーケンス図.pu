@@ -3,7 +3,7 @@ hide footbox
 
 participant "WebApiApplication" as WebApiApplication
 participant "Configuration" as Configuration
-participant "Seat" as Seat
+participant "SeatDefinition" as SeatDefinition
 
 note over WebApiApplication
 	ASP.NETで提供されているクラス
@@ -19,8 +19,8 @@ activate Configuration
 
 alt ファイル読み込みに成功
 	loop
-		create Seat
-		Configuration -> Seat :new Seat(name:string, moniker:string)
+		create SeatDefinition
+		Configuration -> SeatDefinition :new SeatDefinition(name:string, moniker:string)
 	end
 	note right
 		Configurationのコンストラクタでファイルを読み、
