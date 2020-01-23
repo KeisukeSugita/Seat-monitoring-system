@@ -41,11 +41,14 @@ package 座席監視アプリ {
 
     class "Seat" as ClientSeat {
         - name:string
+        - succeeded:boolean
         - humanExists:boolean
-        + Seat(name:string, humanExists:boolean)
+        + Seat(name:string, humanExists:boolean, succeeded:boolean)
         - SetName(string):void
+        - SetSucceeded(boolean):void
         - SetHumanExists(boolean):void
         + GetName():string
+        + GetSucceeded():boolean
         + GetHumanExists():boolean
     }
 }
@@ -70,7 +73,9 @@ package SeatMonitoringAPI {
 	end note
 
     class Camera {
-        + Shoot(moniker:string):Bitmap
+        - moniker:string
+        + Camera(moniker:string)
+        + Shoot():Bitmap
     }
     note right of Camera
         ・カメラから画像を取得するクラス
@@ -87,8 +92,8 @@ package SeatMonitoringAPI {
     end note
 
     class SeatDefinition {
-        - seatName:string
         - moniker:string
+        - seatName:string
         + Seat(name:string, moniker:string)
         + GetSeatName():string
         + GetMoniker():string
@@ -96,9 +101,21 @@ package SeatMonitoringAPI {
 
     class Seat {
         - seatDefinition:SeatDefinition
+        - succeeded:boolean
         - humanExists:boolean
-        + Seat(seatDifinition:SeatDefinition, humanExists:boolean)
+        + Seat(seatDifinition:SeatDefinition, humanExists:boolean, succeeded:boolean)
         + GetSeatDefinition():string
+        + GetSucceeded():boolean
+        + GetHumanExists():boolean
+    }
+    
+    class SeatResult {
+        - name:string
+        - succeeded:boolean
+        - humanExists:boolean
+        + Seat(name:string, humanExists:boolean, succeeded:boolean)
+        + GetSeatDefinition():string
+        + GetSucceeded():boolean
         + GetHumanExists():boolean
     }
 }
@@ -118,9 +135,10 @@ SeatMonitoringApiClient -down-> SeatsController
 SeatsController -left-> SeatsScanner
 ServerConfiguration "1"*-down-"0..10" SeatDefinition
 SeatsScanner --> ServerConfiguration
-SeatsScanner --> Camera
 SeatsScanner --> CsHumanDetector
+SeatsScanner --> Camera
 SeatsScanner -left-> Seat
 CppHumanDetector <-- CsHumanDetector
+SeatsController -> SeatResult
 
 @enduml
