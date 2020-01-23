@@ -12,7 +12,7 @@ namespace SeatMonitoringAPI.Controllers
     /// </summary>
     public class SeatsController : ApiController
     {
-        private ISeatsScanner SeatsScanner { get; set; }
+        private readonly ISeatsScanner seatsScanner;
 
         /// <summary>
         /// SeatsScannerプロパティを初期化するコンストラクタ
@@ -22,11 +22,11 @@ namespace SeatMonitoringAPI.Controllers
         public SeatsController()
         {
             var cameras = new List<ICamera>();
-            foreach (var seatDefinition in Models.Configuration.Instance.SeatDefinitions)
+            foreach (var seatDefinition in Models.Configuration.Instance.seatDefinitions)
             {
-                cameras.Add(new Camera(seatDefinition.Moniker));
+                cameras.Add(new Camera(seatDefinition.moniker));
             }
-            SeatsScanner = new SeatsScanner(cameras, new HumanDetector());
+            seatsScanner = new SeatsScanner(cameras, new HumanDetector());
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace SeatMonitoringAPI.Controllers
         /// <param name="seatsScanner"></param>
         public SeatsController(ISeatsScanner seatsScanner)
         {
-            SeatsScanner = seatsScanner;
+            this.seatsScanner = seatsScanner;
         }
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace SeatMonitoringAPI.Controllers
         /// <returns>SeatMonitoringApiのレスポンスメッセージ</returns>
         public HttpResponseMessage GetSeats()
         {
-            var result = SeatsScanner.ScanAll()
-                .Select(seat => new SeatsResult(seat.SeatDefinition.Name, seat.Status.ToString()))
+            var result = seatsScanner.ScanAll()
+                .Select(seat => new SeatsResult(seat.seatDefinition.name, seat.status.ToString()))
                 .ToList();
 
 

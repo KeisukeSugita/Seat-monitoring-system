@@ -13,12 +13,12 @@ namespace SeatMonitoringAPI.Models
     public class Camera : ICamera
     {
         private Bitmap Photo { get; set; }  // 取得した画像
-        public string Moniker { get; private set; }
+        public readonly string moniker;
         private bool IsPicked = false;  // 画像を取得したかどうかを表すフラグ
 
         public Camera(string moniker)
         {
-            Moniker = $@"@device:pnp:\\?\{moniker}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
+            this.moniker = $@"@device:pnp:\\?\{moniker}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
         }
 
         /// <summary>
@@ -30,9 +30,9 @@ namespace SeatMonitoringAPI.Models
         {
             foreach (FilterInfo filterInfo in WebApiApplication.filterInfoCollection)   // 接続されているカメラのdeviceMonikerに渡されたmonikerがあるか確認
             {
-                if (filterInfo.MonikerString == Moniker)
+                if (filterInfo.MonikerString == moniker)
                 {
-                    var videoCaptureDevice = new VideoCaptureDevice(Moniker);
+                    var videoCaptureDevice = new VideoCaptureDevice(moniker);
 
                     videoCaptureDevice.NewFrame += new NewFrameEventHandler(PickFrame); // カメラが画像を取得したときに発生するイベント
 

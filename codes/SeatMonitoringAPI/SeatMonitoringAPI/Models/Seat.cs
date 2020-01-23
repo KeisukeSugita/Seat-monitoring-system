@@ -20,13 +20,13 @@ namespace SeatMonitoringAPI.Models
     /// </summary>
     public class Seat
     {
-        public SeatDefinition SeatDefinition { get; private set; }  // 監視座席名、モニカ
-        public SeatStatus Status { get; private set; }   // 座席状態
+        public readonly SeatDefinition seatDefinition;  // 監視座席名、モニカ
+        public readonly SeatStatus status;   // 座席状態
 
         public Seat(SeatDefinition seatDefinition, SeatStatus status)
         {
-            SeatDefinition = seatDefinition;
-            Status = status;
+            this.seatDefinition = seatDefinition;
+            this.status = status;
         }
     }
 }

@@ -10,13 +10,13 @@ namespace SeatMonitoringAPI.Models
     /// </summary>
     public class SeatDefinition
     {
-        public string Moniker { get; private set; } // モニカ
-        public string Name { get; private set; }    // 監視座席名
+        public readonly string moniker; // モニカ
+        public readonly string name;    // 監視座席名
 
         public SeatDefinition(string moniker, string name)
         {
-            Moniker = moniker;
-            Name = name;
+            this.moniker = moniker;
+            this.name = name;
         }
     }
 }

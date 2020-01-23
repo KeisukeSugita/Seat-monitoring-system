@@ -10,13 +10,13 @@ namespace SeatMonitoringAPI.Models
     /// </summary>
     public class SeatsScanner : ISeatsScanner
     {
-        private List<ICamera> Cameras { get; set; } // カメラから画像を取得するためのICameraのList
-        private IHumanDetector HumanDetector { get; set; }  // 画像に人が写っているかを判定するためのIHumanDetector
+        private readonly List<ICamera> cameras; // カメラから画像を取得するためのICameraのList
+        private readonly IHumanDetector humanDetector;  // 画像に人が写っているかを判定するためのIHumanDetector
 
         public SeatsScanner(List<ICamera> cameras, IHumanDetector humanDetector)
         {
-            Cameras = cameras;
-            HumanDetector = humanDetector;
+            this.cameras = cameras;
+            this.humanDetector = humanDetector;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace SeatMonitoringAPI.Models
             var seats = new List<Seat>();
             int seatNum = 0;
 
-            foreach (var camera in Cameras)
+            foreach (var camera in cameras)
             {
                 Bitmap photo;
                 SeatStatus status;
@@ -40,7 +40,7 @@ namespace SeatMonitoringAPI.Models
                     photo = camera.Shoot();
 
                     // 画像に人が写っているか判定
-                    if (HumanDetector.Detect(photo))
+                    if (humanDetector.Detect(photo))
                     {
                         status = SeatStatus.Exists;
                     }
@@ -55,7 +55,7 @@ namespace SeatMonitoringAPI.Models
                 }
 
                 // SeatクラスのインスタンスをListに追加
-                seats.Add(new Seat(Configuration.Instance.SeatDefinitions[seatNum], status));
+                seats.Add(new Seat(Configuration.Instance.seatDefinitions[seatNum], status));
 
                 seatNum++;
             }

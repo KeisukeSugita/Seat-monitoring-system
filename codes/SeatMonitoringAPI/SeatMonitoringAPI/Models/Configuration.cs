@@ -29,7 +29,7 @@ namespace SeatMonitoringAPI.Models
             {
             }
         }
-        public ReadOnlyCollection<SeatDefinition> SeatDefinitions { get; private set; }
+        public readonly ReadOnlyCollection<SeatDefinition> seatDefinitions;
 
         /// <summary>
         /// Json形式のStreamをSeatDefinition型のListに変換してInstanseプロパティに代入するコンストラクタ
@@ -69,7 +69,7 @@ namespace SeatMonitoringAPI.Models
                     break;
                 }
             }
-            SeatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
+            this.seatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
         }
 
         /// <summary>
