@@ -40,14 +40,7 @@ namespace SeatMonitoringAPI.Models
                     photo = camera.Shoot();
 
                     // 画像に人が写っているか判定
-                    if (humanDetector.Detect(photo))
-                    {
-                        status = SeatStatus.Exists;
-                    }
-                    else
-                    {
-                        status = SeatStatus.NotExists;
-                    }
+                    status = humanDetector.Detect(photo) ? SeatStatus.Exists : SeatStatus.NotExists;
                 }
                 catch (InvalidOperationException)
                 {
