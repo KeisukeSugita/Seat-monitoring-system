@@ -47,8 +47,6 @@ namespace SeatMonitoringAPI.Models
             }
 
             var seatDefinitions = new List<SeatDefinition>();
-            // 登録数のカウンタ
-            int objNum = 0;
             foreach(var jsonObjElement in jsonObj)
             {
                 string moniker = jsonObjElement.Moniker;
@@ -60,11 +58,6 @@ namespace SeatMonitoringAPI.Models
                 }
 
                 seatDefinitions.Add(new SeatDefinition(moniker, name));
-                objNum++;
-                if (objNum == 10)
-                {
-                    break;
-                }
             }
             this.seatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
         }
