@@ -8,6 +8,7 @@ namespace SeatMonitoringApplication
 {
     public interface IPeriodicNotifier
     {
+        bool IsStopRequested { get; set; }
         void Start();
         void Stop();
     }
