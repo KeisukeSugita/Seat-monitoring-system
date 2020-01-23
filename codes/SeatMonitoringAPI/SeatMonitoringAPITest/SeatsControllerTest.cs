@@ -33,9 +33,9 @@ namespace SeatMonitoringAPITest
             }
 
             var seats = new List<Seat>();
-            seats.Add(new Seat(Configuration.Instance.SeatDefinitions[0], SeatStatus.Exists));
-            seats.Add(new Seat(Configuration.Instance.SeatDefinitions[1], SeatStatus.NotExists));
-            seats.Add(new Seat(Configuration.Instance.SeatDefinitions[2], SeatStatus.Failure));
+            seats.Add(new Seat(Configuration.Instance.seatDefinitions[0], SeatStatus.Exists));
+            seats.Add(new Seat(Configuration.Instance.seatDefinitions[1], SeatStatus.NotExists));
+            seats.Add(new Seat(Configuration.Instance.seatDefinitions[2], SeatStatus.Failure));
 
             var seatsScannerMock = new Mock<ISeatsScanner>();
             seatsScannerMock.Setup(x => x.ScanAll()).Returns(seats);
