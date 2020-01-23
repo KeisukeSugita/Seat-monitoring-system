@@ -12,7 +12,7 @@ namespace SeatMonitoringAPI.Models
     {
         Exists, // 在席
         NotExists,  // 離席
-        Failure // 不明
+        Failure, // 不明
     }
 
     /// <summary>
