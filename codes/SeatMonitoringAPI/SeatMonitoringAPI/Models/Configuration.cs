@@ -36,15 +36,8 @@ namespace SeatMonitoringAPI.Models
         {
             dynamic jsonObj;
 
-            try
-            {
-                // Json形式の文字列をデシリアライズ
-                jsonObj = JsonConvert.DeserializeObject<dynamic>(streamReader.ReadToEnd());
-            }
-            catch(JsonReaderException)
-            {
-                throw new InvalidOperationException("Json形式ではないファイルが読み込まれました。");
-            }
+            // Json形式の文字列をデシリアライズ
+            jsonObj = JsonConvert.DeserializeObject<dynamic>(streamReader.ReadToEnd());
 
             var seatDefinitions = new List<SeatDefinition>();
             foreach(var jsonObjElement in jsonObj)
