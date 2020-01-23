@@ -31,7 +31,7 @@ namespace SeatMonitoringAPI.Models
 
             foreach (var camera in cameras)
             {
-                Bitmap photo;
+                Bitmap photo = null;
                 SeatState status;
 
                 try
@@ -45,6 +45,10 @@ namespace SeatMonitoringAPI.Models
                 catch (InvalidOperationException)
                 {
                     status = SeatState.Failure;
+                }
+                finally
+                {
+                    photo.Dispose();
                 }
 
                 // SeatクラスのインスタンスをListに追加
