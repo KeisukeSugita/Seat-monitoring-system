@@ -28,36 +28,42 @@ namespace SeatMonitoringAPI.Models
         /// <returns>取得した画像データ</returns>
         public Bitmap Shoot()
         {
+            bool cameraIsExists = false;
             foreach (FilterInfo filterInfo in WebApiApplication.filterInfoCollection)   // 接続されているカメラのdeviceMonikerに渡されたmonikerがあるか確認
             {
                 if (filterInfo.MonikerString == moniker)
                 {
-                    var videoCaptureDevice = new VideoCaptureDevice(moniker);
-
-                    videoCaptureDevice.NewFrame += new NewFrameEventHandler(PickFrame); // カメラが画像を取得したときに発生するイベント
-
-                    videoCaptureDevice.Start();
-
-                    // 該当カメラが存在しなくてもエラーが発生しないため、時間経過で例外をスローする
-                    int processingTime = 0;
-                    // 画像が取得できるまでのループ
-                    while (!IsPicked)
-                    {
-                        Thread.Sleep(10);
-                        processingTime++;
-                        if (processingTime >= 100)
-                        {
-                            throw new InvalidOperationException("画像が取得できませんでした。該当するカメラが存在しないか、接続が切断された可能性があります。");
-                        }
-                    }
-                    videoCaptureDevice.Stop();
-
-                    IsPicked = false;   // 次にShootが呼ばれたときに画像を取得できるよう、falseにする
-
-                    return Photo;
+                    cameraIsExists = true;
                 }
             }
-            throw new InvalidOperationException("該当するカメラが存在しません。");
+            if(!cameraIsExists)
+            {
+                throw new InvalidOperationException("該当するカメラが存在しません。");
+            }
+            
+            var videoCaptureDevice = new VideoCaptureDevice(moniker);
+
+            videoCaptureDevice.NewFrame += new NewFrameEventHandler(PickFrame); // カメラが画像を取得したときに発生するイベント
+
+            videoCaptureDevice.Start();
+
+            // 該当カメラが存在しなくてもエラーが発生しないため、時間経過で例外をスローする
+            int processingTime = 0;
+            // 画像が取得できるまでのループ
+            while (!IsPicked)
+            {
+                Thread.Sleep(10);
+                processingTime++;
+                if (processingTime >= 100)
+                {
+                    throw new InvalidOperationException("画像が取得できませんでした。該当するカメラが存在しないか、接続が切断された可能性があります。");
+                }
+            }
+            videoCaptureDevice.Stop();
+
+            IsPicked = false;   // 次にShootが呼ばれたときに画像を取得できるよう、falseにする
+
+            return Photo;
         }
 
         /// <summary>
