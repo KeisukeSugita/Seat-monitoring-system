@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Linq;
 using System.Text;
 using System.Web.Http;
+using Newtonsoft.Json;
 
 namespace SeatMonitoringAPI.Controllers
 {
@@ -54,7 +55,7 @@ namespace SeatMonitoringAPI.Controllers
             {
                 // JSON形式の文字列を固定で返す
                 Content = new StringContent(
-                    Newtonsoft.Json.JsonConvert.SerializeObject(result),
+                    JsonConvert.SerializeObject(result),
                     Encoding.UTF8,
                     "application/json"
                 )
