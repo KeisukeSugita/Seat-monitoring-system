@@ -16,9 +16,9 @@ namespace SeatMonitoringAPI.Models
         private Bitmap Photo { get; set; }  // 取得した画像
         public readonly string Moniker;
         private readonly AutoResetEvent shotEvent;
-        public Camera(string moniker)
+        public Camera(string deviceInstansePath)
         {
-            Moniker = $@"@device:pnp:\\?\{moniker}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
+            Moniker = $@"@device:pnp:\\?\{deviceInstansePath}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
             shotEvent = new AutoResetEvent(false);
         }
 

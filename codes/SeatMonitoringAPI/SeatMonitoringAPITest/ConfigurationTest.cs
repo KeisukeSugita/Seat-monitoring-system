@@ -39,11 +39,11 @@ namespace SeatMonitoringAPITest
             {
                 Configuration.Initialize(streamReader);
                 var configuration = Configuration.Instance.seatDefinitions;
-                Assert.AreEqual(configuration[0].moniker, "usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002");
+                Assert.AreEqual(configuration[0].deviceInstansePath, "usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002");
                 Assert.AreEqual(configuration[0].name, "杉田 圭輔");
-                Assert.AreEqual(configuration[1].moniker, "usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003");
+                Assert.AreEqual(configuration[1].deviceInstansePath, "usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003");
                 Assert.AreEqual(configuration[1].name, "Keisuke Sugita");
-                Assert.AreEqual(configuration[2].moniker, "usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004");
+                Assert.AreEqual(configuration[2].deviceInstansePath, "usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004");
                 Assert.AreEqual(configuration[2].name, "スギタ ケイスケ");
             }
         }

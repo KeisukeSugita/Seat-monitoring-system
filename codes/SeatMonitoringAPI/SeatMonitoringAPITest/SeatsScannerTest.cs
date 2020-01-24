@@ -55,13 +55,13 @@ namespace SeatMonitoringAPITest
             var seatsScanner = new SeatsScanner(cameras, humanDetectorMock.Object);
             var seats = seatsScanner.ScanAll();
 
-            Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002", seats[0].seatDefinition.moniker);
+            Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002", seats[0].seatDefinition.deviceInstansePath);
             Assert.AreEqual("杉田 圭輔", seats[0].seatDefinition.name);
             Assert.AreEqual("Exists", seats[0].status.ToString());
-            Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003", seats[1].seatDefinition.moniker);
+            Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003", seats[1].seatDefinition.deviceInstansePath);
             Assert.AreEqual("Keisuke Sugita", seats[1].seatDefinition.name);
             Assert.AreEqual("NotExists", seats[1].status.ToString());
-            Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004", seats[2].seatDefinition.moniker);
+            Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004", seats[2].seatDefinition.deviceInstansePath);
             Assert.AreEqual("スギタ ケイスケ", seats[2].seatDefinition.name);
             Assert.AreEqual("Failure", seats[2].status.ToString());
         }
