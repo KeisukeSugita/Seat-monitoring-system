@@ -20,21 +20,21 @@ namespace SeatMonitoringApplication
         }
 
         [DataMember(Name = "Name")]
-        public string Name { get; private set; }
+        public readonly string name;
         [DataMember(Name = "Status")]
-        public SeatStatus Status { get; private set; }
+        public readonly SeatStatus status;
 
 
         public Seat(string name, SeatStatus status)
         {
-            Name = name;
-            Status = status;
+            this.name = name;
+            this.status = status;
         }
 
         public Seat(string name, string status)
         {
-            Name = name;
-            Status = FromString(status);
+            this.name = name;
+            this.status = FromString(status);
         }
 
         /// <summary>
