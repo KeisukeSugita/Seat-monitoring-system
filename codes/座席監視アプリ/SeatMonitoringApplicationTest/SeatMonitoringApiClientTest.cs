@@ -17,57 +17,34 @@ namespace SeatMonitoringApplicationTest
         [TestMethod]
         public void GetSeats_IsSucceeded_ReturnSeatList()
         {
-            var ipAddress = "test";
+            var Host = "test";
             var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-            httpResponseMessage.Content = new StringContent(@"[{""Name"":""杉田 圭輔"",""Status"":""Exists""},{""Name"":""Keisuke Sugita"",""Status"":""Failure""}]");
+            httpResponseMessage.Content = new StringContent(@"[{""name"":""杉田 圭輔"",""status"":""Exists""},{""name"":""Keisuke Sugita"",""status"":""Failure""}]");
             var myHttpClientMock = new Mock<IMyHttpClient>();
-            myHttpClientMock.Setup(x => x.GetAsync($@"http://{ipAddress}:44383/api/seats")).Returns(httpResponseMessage);
+            myHttpClientMock.Setup(x => x.GetAsync($@"http://{Host}/api/seats")).Returns(httpResponseMessage);
 
-            var seatMonitoringApiClient = new SeatMonitoringApiClient(ipAddress, myHttpClientMock.Object);
+            var seatMonitoringApiClient = new SeatMonitoringApiClient(Host, myHttpClientMock.Object);
             var seatsResult = seatMonitoringApiClient.GetSeats();
 
-            Assert.AreEqual("杉田 圭輔", seatsResult[0].Name);
-            Assert.AreEqual(Seat.SeatStatus.Exists, seatsResult[0].Status);
-            Assert.AreEqual("Keisuke Sugita", seatsResult[1].Name);
-            Assert.AreEqual(Seat.SeatStatus.Failure, seatsResult[1].Status);
+            Assert.AreEqual("杉田 圭輔", seatsResult[0].name);
+            Assert.AreEqual(Seat.SeatStatus.Exists, seatsResult[0].status);
+            Assert.AreEqual("Keisuke Sugita", seatsResult[1].name);
+            Assert.AreEqual(Seat.SeatStatus.Failure, seatsResult[1].status);
         }
 
-        /// <summary>
-        /// 接続がタイムアウトした場合、SeatsApiExceptionをスローするかのテスト
-        /// </summary>
-        [TestMethod]
-        public void GetSeats_CatchTaskCanceledException_ThrowSeatsApiException()
-        {
-            var ipAddress = "test";
-            var myHttpClientMock = new Mock<IMyHttpClient>();
-            myHttpClientMock.Setup(x => x.GetAsync($@"http://{ipAddress}:44383/api/seats")).Throws(new TaskCanceledException());
-
-            var seatMonitoringApiClient = new SeatMonitoringApiClient(ipAddress, myHttpClientMock.Object);
-
-            try
-            {
-                var seatsResult = seatMonitoringApiClient.GetSeats();
-            }
-            catch (SeatsApiException e)
-            {
-                Assert.AreEqual("接続がタイムアウトしました。", e.Message);
-                return;
-            }
-
-            Assert.Fail();
-        }
 
         /// <summary>
-        /// サーバへの接続に失敗した場合、SeatsApiExceptionをスローするかのテスト
+        /// サーバへの接続に失敗した場合、接続がタイムアウトした場合、SeatsApiExceptionをスローするかのテスト
         /// </summary>
         [TestMethod]
         public void GetSeats_CatchAggregateException_ThrowSeatsApiException()
         {
-            var ipAddress = "test";
+            var aggregateException = new AggregateException();
+            var Host = "test";
             var myHttpClientMock = new Mock<IMyHttpClient>();
-            myHttpClientMock.Setup(x => x.GetAsync($@"http://{ipAddress}:44383/api/seats")).Throws(new AggregateException());
+            myHttpClientMock.Setup(x => x.GetAsync($@"http://{Host}/api/seats")).Throws(aggregateException);
 
-            var seatMonitoringApiClient = new SeatMonitoringApiClient(ipAddress, myHttpClientMock.Object);
+            var seatMonitoringApiClient = new SeatMonitoringApiClient(Host, myHttpClientMock.Object);
 
             try
             {
@@ -76,6 +53,7 @@ namespace SeatMonitoringApplicationTest
             catch (SeatsApiException e)
             {
                 Assert.AreEqual("サーバへの接続に失敗しました。", e.Message);
+                Assert.AreEqual(aggregateException, e.InnerException);
                 return;
             }
 
@@ -88,12 +66,12 @@ namespace SeatMonitoringApplicationTest
         [TestMethod]
         public void GetSeats_IsFailed_ThrowSeatsApiException()
         {
-            var ipAddress = "test";
+            var Host = "test";
             var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
             var myHttpClientMock = new Mock<IMyHttpClient>();
-            myHttpClientMock.Setup(x => x.GetAsync($@"http://{ipAddress}:44383/api/seats")).Returns(httpResponseMessage);
+            myHttpClientMock.Setup(x => x.GetAsync($@"http://{Host}/api/seats")).Returns(httpResponseMessage);
 
-            var seatMonitoringApiClient = new SeatMonitoringApiClient(ipAddress, myHttpClientMock.Object);
+            var seatMonitoringApiClient = new SeatMonitoringApiClient(Host, myHttpClientMock.Object);
 
             try
             {
