@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringAPI", "SeatMonitoringAPI\SeatMonitoringAPI.csproj", "{CBCF0D9D-C1A8-401D-A28D-6948BAD70BEC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7F969EFB-8AE4-4131-B445-9C44E9BE1744} = {7F969EFB-8AE4-4131-B445-9C44E9BE1744}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringAPITest", "SeatMonitoringAPITest\SeatMonitoringAPITest.csproj", "{0DFC6922-0CD0-4C82-B3E0-F3AEFCD77DDA}"
 EndProject
