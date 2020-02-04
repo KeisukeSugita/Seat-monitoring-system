@@ -7,18 +7,6 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// 使用中のリソースをすべてクリーンアップします。
-        /// </summary>
-        /// <param name="disposing">マネージド リソースを破棄する場合は true を指定し、その他の場合は false を指定します。</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
         #region Windows フォーム デザイナーで生成されたコード
 
@@ -41,7 +29,7 @@
             this.columnHeader1});
             this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(180, 237);
+            this.listView1.Size = new System.Drawing.Size(180, 257);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -61,14 +49,14 @@
             this.imageList1.Images.SetKeyName(2, "状態取得失敗アイコン.png");
             this.imageList1.Images.SetKeyName(3, "サーバ接続エラーアイコン.png");
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(204, 261);
+            this.ClientSize = new System.Drawing.Size(204, 281);
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "座席監視アプリ";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Close);
             this.Load += new System.EventHandler(this.Form1_Load);
