@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using SeatMonitoringApplication;
@@ -9,29 +10,22 @@ namespace SeatMonitoringApplicationTest
     [TestClass]
     public class PeriodicNotifierTest
     {
-        /// <summary>
-        /// Start_GetSeatsIsSuccess_IsSucceededIsTrueのテスト用通知先メソッド
-        /// </summary>
-        /// <param name="seats"></param>
-        /// <param name="isSucceeded"></param>
-        public void TestUpdate_IsSucceeded(List<Seat> seats, bool isSucceeded)
+        private List<(List<Seat>, bool, DateTime)> GetResult(ISeatMonitoringApiClient seatMonitoringApiClient, int count, int interval)
         {
-            Assert.IsTrue(isSucceeded);
-            Assert.AreEqual("杉田 圭輔", seats[0].Name);
-            Assert.AreEqual(Seat.SeatStatus.Exists, seats[0].Status);
-            Assert.AreEqual("Keisuke Sugita", seats[1].Name);
-            Assert.AreEqual(Seat.SeatStatus.Failure, seats[1].Status);
-        }
+            var results = new List<(List<Seat>, bool, DateTime)>();
+            PeriodicNotifier.Destination destination = (List<Seat> seats, bool isSucceeded) => {
+                results.Add((seats, isSucceeded, DateTime.Now));
+            };
 
-        /// <summary>
-        /// Start_GetSeatsIsNotSuccess_IsSucceededIsFalseのテスト用通知先メソッド
-        /// </summary>
-        /// <param name="seats"></param>
-        /// <param name="isSucceeded"></param>
-        public void TestUpdate_IsNotSucceeded(List<Seat> seats, bool isSucceeded)
-        {
-            Assert.IsFalse(isSucceeded);
-            Assert.IsNull(seats);
+            var periodicNotifier = new PeriodicNotifier(destination, seatMonitoringApiClient, interval);
+            periodicNotifier.Start();
+            while (results.Count < count)
+            {
+                Thread.Sleep(1000);
+            }
+            periodicNotifier.Stop();
+
+            return results;
         }
 
         /// <summary>
@@ -41,17 +35,25 @@ namespace SeatMonitoringApplicationTest
         [TestMethod]
         public void Start_GetSeatsIsSuccess_IsSucceededIsTrue()
         {
-            var seats = new List<Seat>();
-            seats.Add(new Seat("杉田 圭輔", Seat.SeatStatus.Exists));
-            seats.Add(new Seat("Keisuke Sugita", Seat.SeatStatus.Failure));
+
+            var expectedSeats = new List<Seat>();
+            expectedSeats.Add(new Seat("杉田 圭輔", Seat.SeatStatus.Exists));
+            expectedSeats.Add(new Seat("Keisuke Sugita", Seat.SeatStatus.Failure));
 
             var seatMonitoringApiClientMock = new Mock<ISeatMonitoringApiClient>();
-            seatMonitoringApiClientMock.Setup(x => x.GetSeats()).Returns(seats);
+            seatMonitoringApiClientMock.Setup(x => x.GetSeats()).Returns(expectedSeats);
 
-            PeriodicNotifier.Destination destination = TestUpdate_IsSucceeded;
+            var results = GetResult(seatMonitoringApiClientMock.Object, 3, 5 * 1000);
 
-            var periodicNotifier = new PeriodicNotifier(destination, seatMonitoringApiClientMock.Object);
-            periodicNotifier.Start();
+            foreach (var (resultSeats, resultIsSucceeded, resultTime) in results)
+            {
+                Assert.AreEqual(expectedSeats, resultSeats);
+                Assert.IsTrue(resultIsSucceeded);
+            }
+            var span = results[1].Item3 - results[0].Item3;
+            Assert.IsTrue(5 * 1000 * 0.9 < span.TotalMilliseconds && span.TotalMilliseconds < 5 * 1000 * 1.1);
+            span = results[2].Item3 - results[1].Item3;
+            Assert.IsTrue(5 * 1000 * 0.9 < span.TotalMilliseconds && span.TotalMilliseconds < 5 * 1000 * 1.1);
         }
 
 
@@ -62,15 +64,22 @@ namespace SeatMonitoringApplicationTest
         [TestMethod]
         public void Start_GetSeatsIsNotSuccess_IsSucceededIsFalse()
         {
-            var seats = new List<Seat>();
+            var expectedSeats = new List<Seat>();
 
             var seatMonitoringApiClientMock = new Mock<ISeatMonitoringApiClient>();
             seatMonitoringApiClientMock.Setup(x => x.GetSeats()).Throws(new SeatsApiException());
 
-            PeriodicNotifier.Destination destination = TestUpdate_IsNotSucceeded;
+            var results = GetResult(seatMonitoringApiClientMock.Object, 3, 5 * 1000);
 
-            var periodicNotifier = new PeriodicNotifier(destination, seatMonitoringApiClientMock.Object);
-            periodicNotifier.Start();
+            foreach (var (resultSeats, resultIsSucceeded, resultTime) in results)
+            {
+                Assert.IsNull(resultSeats);
+                Assert.IsFalse(resultIsSucceeded);
+            }
+            var span = results[1].Item3 - results[0].Item3;
+            Assert.IsTrue(5 * 1000 * 0.9 < span.TotalMilliseconds && span.TotalMilliseconds < 5 * 1000 * 1.1);
+            span = results[2].Item3 - results[1].Item3;
+            Assert.IsTrue(5 * 1000 * 0.9 < span.TotalMilliseconds && span.TotalMilliseconds < 5 * 1000 * 1.1);
         }
 
 
@@ -84,12 +93,13 @@ namespace SeatMonitoringApplicationTest
 
             var seatMonitoringApiClientMock = new Mock<ISeatMonitoringApiClient>();
 
-            PeriodicNotifier.Destination destination = TestUpdate_IsSucceeded;
+            var results = GetResult(seatMonitoringApiClientMock.Object, 3, 5 * 1000);
 
-            var periodicNotifier = new PeriodicNotifier(destination, seatMonitoringApiClientMock.Object);
-            periodicNotifier.Stop();
+            var expectedCount = results.Count;
 
-            Assert.AreEqual(true, periodicNotifier.IsStopRequested);
+            Thread.Sleep(10 * 1000);
+
+            Assert.AreEqual(expectedCount, results.Count);
         }
     }
 }
