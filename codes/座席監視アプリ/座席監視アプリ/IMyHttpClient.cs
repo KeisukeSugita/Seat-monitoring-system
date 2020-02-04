@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace SeatMonitoringApplication
 {
-    public interface IMyHttpClient
+    public interface IMyHttpClient : IDisposable
     {
-        TimeSpan Timeout { get; set; }
-
         HttpResponseMessage GetAsync(string requestUri);
     }
 }

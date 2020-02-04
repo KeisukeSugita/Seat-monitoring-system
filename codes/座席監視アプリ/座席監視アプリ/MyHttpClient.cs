@@ -10,11 +10,16 @@ namespace SeatMonitoringApplication
     class MyHttpClient : IMyHttpClient
     {
         private HttpClient httpClient = new HttpClient();
-        private TimeSpan timeout;
-        public TimeSpan Timeout
+
+        public MyHttpClient()
         {
-            get => timeout;
-            set => timeout = httpClient.Timeout = value;
+            // タイムアウト時間を60秒に設定
+            httpClient.Timeout = TimeSpan.FromMilliseconds(60000);
+        }
+
+        public void Dispose()
+        {
+            httpClient.Dispose();
         }
 
         /// <summary>
@@ -26,5 +31,6 @@ namespace SeatMonitoringApplication
         {
             return httpClient.GetAsync(requestUri).Result;
         }
+
     }
 }
