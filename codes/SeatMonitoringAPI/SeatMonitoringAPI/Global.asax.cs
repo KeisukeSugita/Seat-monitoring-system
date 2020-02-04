@@ -2,14 +2,17 @@ using AForge.Video.DirectShow;
 using SeatMonitoringAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Configuration = SeatMonitoringAPI.Models.Configuration;
 
 namespace SeatMonitoringAPI
 {
@@ -18,7 +21,8 @@ namespace SeatMonitoringAPI
         public static FilterInfoCollection filterInfoCollection = new FilterInfoCollection(FilterCategory.VideoInputDevice);
         protected void Application_Start()
         {
-            using (var streamReader = new StreamReader(@"SeatMonitoringAPI\LinkCameraAndName.json", Encoding.UTF8))
+            string settingFilePath = ConfigurationManager.AppSettings["SettingFilePath"];
+            using (var streamReader = new StreamReader(settingFilePath, Encoding.UTF8))
             {
                 Configuration.Initialize(streamReader);
             }
