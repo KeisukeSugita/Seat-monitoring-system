@@ -17,25 +17,10 @@ namespace SeatMonitoringAPITest
         [TestMethod]
         public void GetSeats_ReturnJsonString()
         {
-            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(@"[{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002"",""Name"":""杉田 圭輔""},
-{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003"",""Name"":""Keisuke Sugita""},
-{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""Name"":""スギタ ケイスケ""}]")))
-            using (var streamReader = new StreamReader(memoryStream))
-            {
-                try
-                {
-                    Configuration.Initialize(streamReader);
-                }
-                catch (InvalidOperationException)
-                {
-                    Assert.Fail();
-                }
-            }
-
             var seats = new List<Seat>();
-            seats.Add(new Seat(Configuration.Instance.seatDefinitions[0], SeatState.Exists));
-            seats.Add(new Seat(Configuration.Instance.seatDefinitions[1], SeatState.NotExists));
-            seats.Add(new Seat(Configuration.Instance.seatDefinitions[2], SeatState.Failure));
+            seats.Add(new Seat(new SeatDefinition("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002", "杉田 圭輔"), SeatState.Exists));
+            seats.Add(new Seat(new SeatDefinition("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003", "Keisuke Sugita"), SeatState.NotExists));
+            seats.Add(new Seat(new SeatDefinition("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004", "スギタ ケイスケ"), SeatState.Failure));
 
             var seatsScannerMock = new Mock<ISeatsScanner>();
             seatsScannerMock.Setup(x => x.ScanAll()).Returns(seats);
@@ -43,7 +28,7 @@ namespace SeatMonitoringAPITest
             var seatsController = new SeatsController(seatsScannerMock.Object);
             var seatsResults = seatsController.GetSeats().Content.ReadAsStringAsync().Result;
 
-            Assert.AreEqual(@"[{""Name"":""杉田 圭輔"",""Status"":""Exists""},{""Name"":""Keisuke Sugita"",""Status"":""NotExists""},{""Name"":""スギタ ケイスケ"",""Status"":""Failure""}]", seatsResults);
+            Assert.AreEqual(@"[{""name"":""杉田 圭輔"",""status"":""Exists""},{""name"":""Keisuke Sugita"",""status"":""NotExists""},{""name"":""スギタ ケイスケ"",""status"":""Failure""}]", seatsResults);
         }
     }
 }
