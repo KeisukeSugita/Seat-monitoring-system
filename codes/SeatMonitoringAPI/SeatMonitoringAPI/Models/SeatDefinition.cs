@@ -13,9 +13,9 @@ namespace SeatMonitoringAPI.Models
         public readonly string deviceInstansePath; // デバイスインスタンスパス
         public readonly string name;    // 監視座席名
 
-        public SeatDefinition(string moniker, string name)
+        public SeatDefinition(string deviceInstancePath, string name)
         {
-            this.deviceInstansePath = moniker;
+            this.deviceInstansePath = deviceInstancePath;
             this.name = name;
         }
     }

@@ -25,7 +25,7 @@ namespace SeatMonitoringAPI.Controllers
             var cameras = new List<ICamera>();
             foreach (var seatDefinition in Models.Configuration.Instance.seatDefinitions)
             {
-                cameras.Add(new Camera(seatDefinition.moniker));
+                cameras.Add(new Camera(seatDefinition.deviceInstansePath));
             }
             seatsScanner = new SeatsScanner(cameras, new HumanDetector());
         }
@@ -49,8 +49,7 @@ namespace SeatMonitoringAPI.Controllers
             var result = seatsScanner.ScanAll()
                 .Select(seat => new SeatsResult(seat.seatDefinition.name, seat.status.ToString()))
                 .ToList();
-
-
+                                          
             return new HttpResponseMessage()
             {
                 // JSON形式の文字列を固定で返す
