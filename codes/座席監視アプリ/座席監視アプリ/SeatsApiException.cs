@@ -13,5 +13,6 @@ namespace SeatMonitoringApplication
     {
         public SeatsApiException() : base() { }
         public SeatsApiException(string message) : base(message) { }
+        public SeatsApiException(string message, Exception e) : base(message, e) { }
     }
 }
