@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using SeatMonitoringAPI.Models;
 
 namespace SeatMonitoringAPITest
@@ -74,6 +75,7 @@ namespace SeatMonitoringAPITest
 
         // ConfigurationのInitializeメソッドにJson形式ではないStreamを渡して実行したとき、例外が発生する
         [TestMethod]
+        [ExpectedException(typeof(JsonReaderException))]
         public void Initialize_InvalidFileType_ExceptionThrow()
         {
             using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(@"""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002"",""杉田 圭輔""
@@ -81,17 +83,7 @@ namespace SeatMonitoringAPITest
 ""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""スギタ ケイスケ""")))
             using (var streamReader = new StreamReader(memoryStream))
             {
-                try
-                {
-                    Configuration.Initialize(streamReader);
-                }
-                catch(InvalidOperationException e)
-                {
-                    Assert.AreEqual(e.Message, "Json形式ではないファイルが読み込まれました。");
-                    return;
-                }
-
-                Assert.Fail();
+                Configuration.Initialize(streamReader);
             }
         }
 
@@ -108,7 +100,7 @@ namespace SeatMonitoringAPITest
                 {
                     Configuration.Initialize(streamReader);
                 }
-                catch (InvalidOperationException e)
+                catch (JsonSerializationException e)
                 {
                     Assert.AreEqual(e.Message, "Jsonファイルのキーが不正です。");
                     return;
@@ -116,6 +108,13 @@ namespace SeatMonitoringAPITest
 
                 Assert.Fail();
             }
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            var privateObject = new PrivateType(typeof(Configuration));
+            privateObject.SetStaticField("instance", null);
         }
     }
 }

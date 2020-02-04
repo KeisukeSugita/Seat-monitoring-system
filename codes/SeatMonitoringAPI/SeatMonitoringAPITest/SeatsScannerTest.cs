@@ -21,14 +21,7 @@ namespace SeatMonitoringAPITest
 {""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""Name"":""スギタ ケイスケ""}]")))
             using (var streamReader = new StreamReader(memoryStream))
             {
-                try
-                {
-                    Configuration.Initialize(streamReader);
-                }
-                catch(InvalidOperationException)
-                {
-                    Assert.Fail();
-                }
+                Configuration.Initialize(streamReader);
             }
 
             var cameras = new List<ICamera>();
@@ -64,6 +57,9 @@ namespace SeatMonitoringAPITest
             Assert.AreEqual("usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004", seats[2].seatDefinition.deviceInstansePath);
             Assert.AreEqual("スギタ ケイスケ", seats[2].seatDefinition.name);
             Assert.AreEqual("Failure", seats[2].status.ToString());
+
+            var privateObject = new PrivateType(typeof(Configuration));
+            privateObject.SetStaticField("instance", null);
         }
     }
 }
