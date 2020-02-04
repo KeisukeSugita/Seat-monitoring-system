@@ -48,7 +48,10 @@ namespace SeatMonitoringAPI.Models
                 }
                 finally
                 {
-                    photo.Dispose();
+                    if(photo != null)
+                    {
+                        photo.Dispose();
+                    }
                 }
 
                 // SeatクラスのインスタンスをListに追加
