@@ -14,12 +14,12 @@ namespace SeatMonitoringApplication
     /// </summary>
     public class SeatMonitoringApiClient : ISeatMonitoringApiClient
     {
-        private string IpAddress { get; set; }
+        private string Host { get; set; }
         private IMyHttpClient HttpClient { get; set; }
 
-        public SeatMonitoringApiClient(string ipAddress, IMyHttpClient httpClient)
+        public SeatMonitoringApiClient(string host, IMyHttpClient httpClient)
         {
-            IpAddress = ipAddress;
+            Host = host;
             HttpClient = httpClient;
         }
 
@@ -32,18 +32,11 @@ namespace SeatMonitoringApplication
             HttpResponseMessage responseMessage;
             try
             {
-                // タイムアウト時間を60秒に設定
-                HttpClient.Timeout = TimeSpan.FromMilliseconds(60000);
-                responseMessage = HttpClient.GetAsync($@"http://{IpAddress}:44383/api/seats");
-                
+                responseMessage = HttpClient.GetAsync($@"http://{Host}/api/seats");
             }
-            catch (TaskCanceledException)
+            catch (AggregateException e)
             {
-                throw new SeatsApiException("接続がタイムアウトしました。");
-            }
-            catch (AggregateException)
-            {
-                throw new SeatsApiException("サーバへの接続に失敗しました。");
+                throw new SeatsApiException("サーバへの接続に失敗しました。", e);
             }
             
             if (responseMessage.StatusCode != HttpStatusCode.OK)
@@ -51,6 +44,7 @@ namespace SeatMonitoringApplication
                 // 期待しないステータスコードを受け取った場合
                 throw new SeatsApiException($@"ステータスコード""{(int)responseMessage.StatusCode}""で失敗しました。");
             }
+            
 
             var responseBody = responseMessage.Content.ReadAsStringAsync().Result;
 
@@ -58,7 +52,7 @@ namespace SeatMonitoringApplication
             var seatsResponse = JsonConvert.DeserializeObject<dynamic>(responseBody);
             // dynammic型からList<Seat>に変換
             return ((IEnumerable<dynamic>)seatsResponse)
-                .Select(seat => new Seat((string)seat.Name, (string)seat.Status))
+                .Select(seat => new Seat((string)seat.name, (string)seat.status))
                 .ToList();
         }
     }
