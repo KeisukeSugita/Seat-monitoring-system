@@ -29,7 +29,7 @@
             this.columnHeader1});
             this.listView1.Location = new System.Drawing.Point(12, 12);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(180, 257);
+            this.listView1.Size = new System.Drawing.Size(140, 207);
             this.listView1.SmallImageList = this.imageList1;
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -38,7 +38,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "監視結果";
-            this.columnHeader1.Width = 176;
+            this.columnHeader1.Width = 136;
             // 
             // imageList1
             // 
@@ -53,9 +53,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(204, 281);
+            this.ClientSize = new System.Drawing.Size(164, 231);
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximumSize = new System.Drawing.Size(180, 270);
+            this.MinimumSize = new System.Drawing.Size(180, 270);
             this.Name = "MainForm";
             this.Text = "座席監視アプリ";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Close);
