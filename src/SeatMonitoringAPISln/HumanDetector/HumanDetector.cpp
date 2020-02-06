@@ -20,10 +20,6 @@ extern "C" bool detect(int rows, int cols, unsigned char* image, const char* cas
 	
 	CascadeClassifier cascade;	//	カスケード分類器格納場所
 	cascade.load(cascadeFile);	//	正面顔情報が入っているカスケード
-	if (cascade.empty())
-	{
-		throw runtime_error("カスケード分類器が読み込めませんでした。");
-	}
 
 	vector<Rect> faces;	//	輪郭情報の格納場所
 
