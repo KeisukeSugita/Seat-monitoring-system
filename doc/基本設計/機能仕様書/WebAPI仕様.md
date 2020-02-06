@@ -6,7 +6,7 @@
 
 ### HTTPリクエスト
 
-`GET http://{IPアドレス}/SeatMonitoring/api/seats`
+`GET http://{ホスト名}/SeatMonitoring/api/seats`
 
 ### レスポンス
 
@@ -20,16 +20,18 @@
 レスポンスの例
 
 ```JSON
-{
-    "name":"Alice",
-    "status":"Exists",
-},
-{
-    "name":"Bob",
-    "status":"NotExists"
-},
-{
-    "name":"Cate",
-    "status":"Failure"
-}
+[
+    {
+        "name":"Alice",
+        "status":"Exists",
+    },
+    {
+        "name":"Bob",
+        "status":"NotExists"
+    },
+    {
+        "name":"Cate",
+        "status":"Failure"
+    }
+]
 ```
