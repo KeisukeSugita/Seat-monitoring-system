@@ -27,6 +27,7 @@ namespace SeatMonitoringAPITest
             finally
             {
                 photo.UnlockBits(bmpData);
+                photo.Dispose();
             }
         }
 
@@ -45,6 +46,7 @@ namespace SeatMonitoringAPITest
             finally
             {
                 photo.UnlockBits(bmpData);
+                photo.Dispose();
             }
         }
     }
