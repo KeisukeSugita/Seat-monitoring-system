@@ -26,6 +26,7 @@ namespace SeatMonitoringAPI.Controllers
             foreach (var seatDefinition in Models.Configuration.Instance.seatDefinitions)
             {
                 cameras.Add(new Camera(seatDefinition.deviceInstansePath));
+                //cameras.Add(new TestCamera(seatDefinition.deviceInstansePath));   // 結合テスト用
             }
             seatsScanner = new SeatsScanner(cameras, new HumanDetector());
         }
