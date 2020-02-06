@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringApplication", "座席監視アプリ\SeatMonitoringApplication.csproj", "{891BA7DA-0F1E-4DDF-8FAA-D9FF3D7D16A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringApplication", "SeatMonitoringApplication\SeatMonitoringApplication.csproj", "{891BA7DA-0F1E-4DDF-8FAA-D9FF3D7D16A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringApplicationTest", "SeatMonitoringApplicationTest\SeatMonitoringApplicationTest.csproj", "{456DE708-7527-43A1-AA3E-AFCEEE65381F}"
 EndProject

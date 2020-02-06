@@ -109,7 +109,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\座席監視アプリ\SeatMonitoringApplication.csproj">
+    <ProjectReference Include="..\SeatMonitoringApplication\SeatMonitoringApplication.csproj">
       <Project>{891ba7da-0f1e-4ddf-8faa-d9ff3d7d16a4}</Project>
       <Name>SeatMonitoringApplication</Name>
     </ProjectReference>
