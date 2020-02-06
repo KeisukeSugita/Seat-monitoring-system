@@ -42,15 +42,15 @@ namespace SeatMonitoringAPI.Models
             var seatDefinitions = new List<SeatDefinition>();
             foreach(var jsonObjElement in jsonObj)
             {
-                string moniker = jsonObjElement.Moniker;
+                string deviceInstansePath = jsonObjElement.DeviceInstansePath;
                 string name = jsonObjElement.Name;
 
-                if (moniker == null || name == null)
+                if (deviceInstansePath == null || name == null)
                 {
                     throw new JsonSerializationException("Jsonファイルのキーが不正です。");
                 }
 
-                seatDefinitions.Add(new SeatDefinition(moniker, name));
+                seatDefinitions.Add(new SeatDefinition(deviceInstansePath, name));
             }
             this.seatDefinitions = new ReadOnlyCollection<SeatDefinition>(seatDefinitions);
         }

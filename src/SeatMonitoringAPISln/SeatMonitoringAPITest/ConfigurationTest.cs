@@ -33,9 +33,9 @@ namespace SeatMonitoringAPITest
         [TestMethod]
         public void Initiarlize_YetCallInitialize_Initializing()
         {
-            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(@"[{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002"",""Name"":""杉田 圭輔""},
-{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003"",""Name"":""Keisuke Sugita""},
-{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""Name"":""スギタ ケイスケ""}]")))
+            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(@"[{""DeviceInstansePath"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002"",""Name"":""杉田 圭輔""},
+{""DeviceInstansePath"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003"",""Name"":""Keisuke Sugita""},
+{""DeviceInstansePath"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""Name"":""スギタ ケイスケ""}]")))
             using (var streamReader = new StreamReader(memoryStream))
             {
                 Configuration.Initialize(streamReader);
@@ -53,9 +53,9 @@ namespace SeatMonitoringAPITest
         [TestMethod]
         public void Initialize_AlreadyCallInitialize_ExceptionThrow()
         {
-            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(@"[{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002"",""Name"":""杉田 圭輔""},
-{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003"",""Name"":""Keisuke Sugita""},
-{""Moniker"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""Name"":""スギタ ケイスケ""}]")))
+            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(@"[{""DeviceInstansePath"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0002"",""Name"":""杉田 圭輔""},
+{""DeviceInstansePath"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0003"",""Name"":""Keisuke Sugita""},
+{""DeviceInstansePath"":""usb#vid_046d&pid_0826&mi_02#6&24bf100&0&0004"",""Name"":""スギタ ケイスケ""}]")))
             using (var streamReader = new StreamReader(memoryStream))
             {
                 try
