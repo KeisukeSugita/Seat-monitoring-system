@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,7 +21,7 @@ namespace SeatMonitoringApplication
             {
                 Application.Run(new MainForm());
             }
-            catch(InvalidOperationException e)
+            catch(ConfigurationErrorsException e)
             {
                 // IPアドレスを読み込めなかった場合
                 MessageBox.Show(e.Message, "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);

@@ -51,7 +51,12 @@ namespace SeatMonitoringApplication
         public MainForm()
         {
             PeriodicNotifier.Destination destination = Update;
-            PeriodicNotifier = new PeriodicNotifier(destination, new SeatMonitoringApiClient(ConfigurationManager.AppSettings["Host"], httpClient));
+            string host = ConfigurationManager.AppSettings["Host"];
+            if (host == null)
+            {
+                throw new ConfigurationErrorsException(@"""Host""が読み込めませんでした");
+            }
+            PeriodicNotifier = new PeriodicNotifier(destination, new SeatMonitoringApiClient(host, httpClient));
             InitializeComponent();
         }
 
@@ -87,7 +92,7 @@ namespace SeatMonitoringApplication
                 {
                     // サーバ接続エラーを表す項目をListViewに追加する
                     listView1.Items.Add(
-                        new ListViewItem("サーバへの接続に失敗しました。")
+                        new ListViewItem("サーバ接続失敗")
                         {
                             ImageIndex = (int)ToolTipTexts.ConectingError,
                             ToolTipText = GetText(ToolTipTexts.ConectingError)
