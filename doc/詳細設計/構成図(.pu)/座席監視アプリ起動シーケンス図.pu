@@ -10,7 +10,7 @@ activate SeatMonitoringApplication
 create Configuration
 SeatMonitoringApplication -> Configuration : new
 note right
-	コンストラクタでファイルからアクセスする
+	コンストラクタでファイルにアクセスする
 	サーバのIPアドレスを取得してフィールドにセットする
 end note
 
@@ -23,7 +23,7 @@ alt ファイル読み込みに成功
 	deactivate Screen
 else ファイル読み込みに失敗
 	note over SeatMonitoringApplication
-		エラーメッセージを表示し、
+		エラーダイアログを表示し、
 		OKボタン押下でアプリケーションを終了する
 	end note
 	deactivate SeatMonitoringApplication
