@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 
 namespace SeatMonitoringAPI.Models
@@ -43,6 +44,10 @@ namespace SeatMonitoringAPI.Models
                     status = humanDetector.Detect(photo) ? SeatState.Exists : SeatState.NotExists;
                 }
                 catch (InvalidOperationException)
+                {
+                    status = SeatState.Failure;
+                }
+                catch (ConfigurationErrorsException)
                 {
                     status = SeatState.Failure;
                 }

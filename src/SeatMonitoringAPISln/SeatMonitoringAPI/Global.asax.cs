@@ -22,6 +22,10 @@ namespace SeatMonitoringAPI
         protected void Application_Start()
         {
             string settingFilePath = ConfigurationManager.AppSettings["SettingFilePath"];
+            if (settingFilePath == null)
+            {
+                throw new ConfigurationErrorsException(@"ÉLÅ[""SettingFilePath""Ç™å©Ç¬Ç©ÇËÇ‹ÇπÇÒÅB");
+            }
             using (var streamReader = new StreamReader(settingFilePath, Encoding.UTF8))
             {
                 Configuration.Initialize(streamReader);

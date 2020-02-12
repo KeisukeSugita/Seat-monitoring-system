@@ -38,7 +38,11 @@ namespace SeatMonitoringAPI.Models
         {
             // メモリにデータをロックし、ロックした部分をBitmapData型で扱う
             var bmpData = photo.LockBits(new Rectangle(0, 0, photo.Width, photo.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-
+            
+            if (cascadeFile == null)
+            {
+                throw new ConfigurationErrorsException(@"キー""CascadeFilePath""が見つかりません。");
+            }
             try
             {
                 return Detect(photo.Height, photo.Width, bmpData.Scan0, cascadeFile);
