@@ -6,7 +6,7 @@
 
 ### HTTPリクエスト
 
-`GET http://{IPアドレス}/SeatMonitoring/api/seats`
+`GET http://{ホスト名}/SeatMonitoring/api/seats`
 
 ### レスポンス
 
@@ -14,20 +14,24 @@
 
 |プロパティ|タイプ|説明|
 |:--|:--|:--|
-|seatName|String|監視座席の名前|
-|statusUnderstand|boolean|監視座席の状態判定ができたかどうか|
-|humanExist|boolean|監視座席の判定結果|
+|name|string|監視座席の名前|
+|status|string|監視座席の状態判定ができたかどうか|
 
 レスポンスの例
 
 ```JSON
-{
-    "seatName":"Alice",
-    "statusUnderstand":true,
-    "humanExist":true
-},
-{
-    "seatName":"Bob",
-    "statusUnderstand":false
-}
+[
+    {
+        "name":"Alice",
+        "status":"Exists",
+    },
+    {
+        "name":"Bob",
+        "status":"NotExists"
+    },
+    {
+        "name":"Cate",
+        "status":"Failure"
+    }
+]
 ```

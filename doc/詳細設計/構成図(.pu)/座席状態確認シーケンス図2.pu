@@ -1,0 +1,151 @@
+@startuml 座席状態確認シーケンス図2
+hide footbox
+skinparam BoxPadding 20
+
+box "座席監視アプリ"
+	participant PeriodicNotifier
+	participant SeatMonitoringApiClient
+	participant "Seat" as ClientSeat
+	participant Screen
+end box
+
+box "SeatMonitoringAPI"
+	participant SeatsController
+	participant SeatsScanner
+	participant Configuration
+	participant "Seat" as ServerSeat
+	participant Camera
+	participant "HumanDetector" as CsHumanDetector
+	participant Seat
+	participant SeatsResult
+end box
+
+box "CppDll"
+	participant "HumanDetector" as CppHumanDetector
+end box
+
+-> PeriodicNotifier :Start(Configratinon)
+note right
+	座席監視アプリのConfigurationクラスは
+	接続するサーバのIPアドレスをメンバに持つ
+end note
+
+PeriodicNotifier -> PeriodicNotifier : SeatMonitoringThread(Configuration)\n非同期呼び出し
+activate PeriodicNotifier
+
+note over Configuration, ServerSeat
+	SeatMonitoringAPIのConfigurationクラスは
+	SeatDefinitionクラスのリストをメンバに持つ
+
+	SeatDefinitionクラスは以下のメンバを持つ
+	・name(監視座席名)
+	・moniker(モニカ(デバイスインスタンスパス))
+end note
+
+create SeatMonitoringApiClient
+PeriodicNotifier -> SeatMonitoringApiClient :new SeatMonitoringApiClient(ipAddress:string)
+
+loop stopFlagがfalseの間
+	PeriodicNotifier -> SeatMonitoringApiClient : GetSeats()
+	activate SeatMonitoringApiClient
+
+	SeatMonitoringApiClient -> SeatsController : GetSeats() [HTTPリクエスト]
+	activate SeatsController
+
+	SeatsController -> SeatsScanner :Execute()
+	activate SeatsScanner
+
+	SeatsScanner -> Configuration :GetSeats()
+	activate Configuration
+	SeatsScanner <- Configuration :"List<SeatDefinition>"
+	deactivate Configuration
+
+	|||
+
+	create CsHumanDetector
+	SeatsScanner -> CsHumanDetector :new
+
+	create CppHumanDetector
+	SeatsScanner -> CppHumanDetector :new
+
+
+	loop 監視座席数
+		create Camera
+		SeatsScanner -> Camera : new Camera(moniker:string)
+		SeatsScanner -> Camera : Shoot()
+		activate Camera
+		|||
+		SeatsScanner <- 	Camera :"Bitmap"
+		deactivate Camera
+		note right
+			monikerでカメラを指定して画像を取得する
+		end note
+
+		SeatsScanner -> CsHumanDetector :Detect(Bitmap)
+		activate CsHumanDetector
+		CsHumanDetector -> CppHumanDetector : Detect(unsigned char[])
+		activate CppHumanDetector
+		CsHumanDetector <- CppHumanDetector : "boolean"
+		deactivate CppHumanDetector
+		SeatsScanner <- CsHumanDetector :"boolean"
+		deactivate CsHumanDetector
+		note right
+			画像に人が写っているかを判定する
+		end note
+
+		SeatsScanner -> ServerSeat :GetName()
+		activate ServerSeat
+		SeatsScanner <- ServerSeat :"string"
+		deactivate ServerSeat
+		
+		create Seat
+		SeatsScanner -> Seat :new Seat(seatDefinition:SeatDefinition, humanExists:boolean, secceeded:boolean)
+		
+	end
+	note over Camera
+		List<Seat>(監視座席名と画像の判定結果のリスト)を作成する
+	end note
+	|||
+
+	SeatsController <- SeatsScanner : List<Seat>
+	deactivate SeatsScanner
+
+	loop 監視座席数
+		create SeatsResult
+		SeatsController -> SeatsResult :new Seat(name:string, humanExists:boolean, succeeded:boolean)
+	end
+	note over Camera
+		List<SeatsResult>(監視座席名と画像の判定結果のリスト)を作成する
+	end note
+
+	SeatMonitoringApiClient <- SeatsController :srting
+	deactivate SeatsController
+
+	loop 監視座席数
+		create ClientSeat
+		SeatMonitoringApiClient -> ClientSeat :Seat(name:string, humanExists:boolean)
+	end
+	note right
+		監視座席数分のインスタンスのリストを作成する
+		SeatのコンストラクタはnameとhumanExistsを
+		引数に受け取って初期化を行う
+	end note
+
+	PeriodicNotifier <- SeatMonitoringApiClient : "List<Seat>"
+	deactivate SeatMonitoringApiClient
+	|||
+	PeriodicNotifier -> Screen : Update(List<Seat>)
+	activate Screen
+	PeriodicNotifier <- Screen
+	deactivate Screen
+	deactivate PeriodicNotifier
+	note right
+		updateメソッド終了までの処理時間を計測し、
+		loop内の処理時間が60秒になるように待機する処理を行う
+		SeatMonitoringAPIからのレスポンスが60秒以上無かった場合、
+		タイムアウトとして画面にはサーバ接続エラーアイコンを表示し、
+		待機処理を行わず次のループ処理を行う
+	end note
+end
+
+@enduml

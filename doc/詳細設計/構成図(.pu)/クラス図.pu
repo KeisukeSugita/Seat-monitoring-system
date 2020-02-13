@@ -1,0 +1,144 @@
+@startuml クラス図
+left to right direction
+
+package 座席監視アプリ {
+    class SeatMonitoringApplication {
+        + Main():void
+    }
+
+    class "Configuration" as ClientConfiguration {
+		'hostnameとかendpointとか
+        - ipAddress:string 
+        + Configuration()
+        + GetIpAddress():string
+    }
+
+	class Screen {
+        + Show(Configuration):void
+        - Update(List<Seat>):void
+		+ Close():void
+    }
+
+    class SeatMonitoringApiClient {
+        - ipAddress:string
+        + SeatMonitoringApiClient(ipAddress:string)
+        + GetSeats():List<Seat>
+    }
+
+    class PeriodicNotifier {
+        - destination:delegate
+        - isStopRequested:boolean
+        + PeriodicNotifier(destination:delegate)
+        + Start(Configuration):void
+        - SeatMonitoringTread(Configuration):void
+        + Stop():void
+    }
+    note top of PeriodicNotifier
+        ・定期的に座席状態の更新を通知するクラス
+        ・コンストラクタで通知先を登録する
+        ・executeメソッドから1分毎に座席の状態をdestinationに通知する
+    end note
+
+    class "Seat" as ClientSeat {
+        - name:string
+        - succeeded:boolean
+        - humanExists:boolean
+        + Seat(name:string, humanExists:boolean, succeeded:boolean)
+        - SetName(string):void
+        - SetSucceeded(boolean):void
+        - SetHumanExists(boolean):void
+        + GetName():string
+        + GetSucceeded():boolean
+        + GetHumanExists():boolean
+    }
+}
+
+package SeatMonitoringAPI {
+	class SeatsController {
+        + GetSeats():string
+    }
+
+    class SeatsScanner {
+        + ScanAll():List<Seat>
+    }
+    
+    class "Configuration" as ServerConfiguration {
+        - seatDefinitions:List<SeatDefinition>
+        + Configuration()
+        + GetSeatDefinitions():List<SeatDefinition>
+    }
+	note top of ServerConfiguration
+		シングルトンパターンとし、ASP.NET Frameworkで
+		提供されている初期処理でインスタンス化される
+	end note
+
+    class Camera {
+        - moniker:string
+        + Camera(moniker:string)
+        + Shoot():Bitmap
+    }
+    note right of Camera
+        ・カメラから画像を取得するクラス
+        ・取得した画像はConfigurationのListのpictureに格納する
+    end note
+    
+    class "HumanDetector" as CsHumanDetector {
+        + Detect(Bitmap):boolean
+    }
+    note right of CsHumanDetector
+        ・画像に人が写っているかを判定するクラス
+        ・実際に判定を行っているのはC++のプログラム
+        　(CppDll:HumanDetector)
+    end note
+
+    class SeatDefinition {
+        - moniker:string
+        - seatName:string
+        + Seat(name:string, moniker:string)
+        + GetSeatName():string
+        + GetMoniker():string
+    }
+
+    class Seat {
+        - seatDefinition:SeatDefinition
+        - succeeded:boolean
+        - humanExists:boolean
+        + Seat(seatDifinition:SeatDefinition, humanExists:boolean, succeeded:boolean)
+        + GetSeatDefinition():string
+        + GetSucceeded():boolean
+        + GetHumanExists():boolean
+    }
+    
+    class SeatResult {
+        - name:string
+        - succeeded:boolean
+        - humanExists:boolean
+        + Seat(name:string, humanExists:boolean, succeeded:boolean)
+        + GetSeatDefinition():string
+        + GetSucceeded():boolean
+        + GetHumanExists():boolean
+    }
+}
+
+package CppDll {
+    class "HumanDetector" as CppHumanDetector {
+        + Detect(unsigned char[]):boolean
+    }
+}
+
+SeatMonitoringApplication -left-> ClientConfiguration
+SeatMonitoringApplication --> Screen
+Screen -left-> PeriodicNotifier
+PeriodicNotifier --> SeatMonitoringApiClient
+SeatMonitoringApiClient -left-> ClientSeat
+SeatMonitoringApiClient -down-> SeatsController
+SeatsController -left-> SeatsScanner
+ServerConfiguration "1"*-down-"0..10" SeatDefinition
+SeatsScanner --> ServerConfiguration
+SeatsScanner --> CsHumanDetector
+SeatsScanner --> Camera
+SeatsScanner -left-> Seat
+CppHumanDetector <-- CsHumanDetector
+SeatsController -> SeatResult
+
+@enduml

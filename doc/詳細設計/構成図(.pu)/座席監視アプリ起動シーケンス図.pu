@@ -1,0 +1,32 @@
+@startuml 座席監視アプリ起動シーケンス図
+hide footbox
+
+participant "SeatMonitoringApplication" as SeatMonitoringApplication
+participant "Configuration" as Configuration
+participant "Screen" as Screen
+
+-> SeatMonitoringApplication :Main()
+activate SeatMonitoringApplication
+create Configuration
+SeatMonitoringApplication -> Configuration : new
+note right
+	コンストラクタでファイルにアクセスする
+	サーバのIPアドレスを取得してフィールドにセットする
+end note
+
+alt ファイル読み込みに成功
+	create Screen
+	SeatMonitoringApplication -> Screen : new
+	SeatMonitoringApplication -> Screen : Show(Configuration)
+	activate Screen
+	SeatMonitoringApplication <- Screen
+	deactivate Screen
+else ファイル読み込みに失敗
+	note over SeatMonitoringApplication
+		エラーダイアログを表示し、
+		OKボタン押下でアプリケーションを終了する
+	end note
+	deactivate SeatMonitoringApplication
+end
+
+@enduml

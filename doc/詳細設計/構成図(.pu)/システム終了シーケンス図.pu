@@ -1,0 +1,24 @@
+@startuml システム終了シーケンス図
+hide footbox
+
+participant "Screen" as Screen
+participant "PeriodicNotifier" as PeriodicNotifier
+
+Screen -> Screen :画面終了イベント\nClose()
+activate Screen
+Screen -> PeriodicNotifier :Stop()
+activate PeriodicNotifier
+Screen <- PeriodicNotifier
+deactivate PeriodicNotifier
+deactivate Screen
+note right
+	isStopRequestedをtrueにし、
+	executeメソッドを終了させる
+end note
+note left
+	ScreenのCloseメソッド終了後、
+	Screen:Showメソッドが終了して画面が閉じ、
+	SeatMonitoringApplication:Mainメソッドが終了する
+end note
+
+@enduml
