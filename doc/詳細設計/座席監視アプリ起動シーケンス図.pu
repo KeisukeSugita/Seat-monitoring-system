@@ -2,22 +2,47 @@
 hide footbox
 
 participant "SeatMonitoringApplication" as SeatMonitoringApplication
-participant "Configuration" as Configuration
 participant "Screen" as Screen
 
 -> SeatMonitoringApplication :Main()
 activate SeatMonitoringApplication
-create Configuration
-SeatMonitoringApplication -> Configuration : new
+
+create SeatMonitoringApiClient
+SeatMonitoringApplication -> SeatMonitoringApiClient : new ToastNotifier(host:string)
 note right
-	コンストラクタでファイルにアクセスする
-	サーバのIPアドレスを取得してフィールドにセットする
+	app.configファイルからホストを読み込み、
+	コンストラクタに引数として渡す
 end note
+
+create PeriodicNotifier
+SeatMonitoringApplication -> PeriodicNotifier : new PeriodicNotifier(SeatMonitoringApiClient)
+
+note over SeatMonitoringApiClient
+	app.configファイルから通知設定を読み込み、
+	通知先の登録を行う
+end note
+
+alt 通知設定がON
+	create MyToastNotificationManager
+	SeatMonitoringApplication -> MyToastNotificationManager : new
+
+	create ToastNotifier
+	SeatMonitoringApplication -> ToastNotifier : new ToastNotifier(MyToastNotificationManager)
+	note over SeatMonitoringApiClient
+		ToastNotifierクラスのNotifyメソッドをPeriodicNotifierクラスのdestinationに追加する
+	end note
+else 通知設定がOFF
+
+end
+
 
 alt ファイル読み込みに成功
 	create Screen
-	SeatMonitoringApplication -> Screen : new
-	SeatMonitoringApplication -> Screen : Show(Configuration)
+	SeatMonitoringApplication -> Screen : new Screen(periodicNotifier:PeriodicNotifier)
+	note right
+		コンストラクタでScreenクラスのUpdateメソッドをPeriodicNotifierクラスのdestinationに追加する
+	end note
+	SeatMonitoringApplication -> Screen : Show()
 	activate Screen
 	SeatMonitoringApplication <- Screen
 	deactivate Screen

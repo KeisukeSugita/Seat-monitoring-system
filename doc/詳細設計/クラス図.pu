@@ -6,37 +6,66 @@ package 座席監視アプリ {
         + Main():void
     }
 
-    class "Configuration" as ClientConfiguration {
-		'hostnameとかendpointとか
-        - ipAddress:string 
-        + Configuration()
-        + GetIpAddress():string
-    }
-
 	class Screen {
-        + Show(Configuration):void
+        - periodicNotifier:IPeriodicNotifier
+        + Show():void
         - Update(List<Seat>):void
 		+ Close():void
     }
 
-    class SeatMonitoringApiClient {
-        - ipAddress:string
-        + SeatMonitoringApiClient(ipAddress:string)
+    interface ISeatMonitoringApiClient {
         + GetSeats():List<Seat>
     }
 
+    class SeatMonitoringApiClient {
+        - host:string
+        + SeatMonitoringApiClient(host:string)
+        + GetSeats():List<Seat>
+    }
+
+    interface IPeriodicNotifier {
+        + Start():void
+        + Stop():void
+    }
+
     class PeriodicNotifier {
-        - destination:delegate
+        + destination:delegate
         - isStopRequested:boolean
-        + PeriodicNotifier(destination:delegate)
-        + Start(Configuration):void
-        - SeatMonitoringTread(Configuration):void
+        + PeriodicNotifier(seatMonitoringApiClient)
+        + Start():void
+        - SeatMonitoringThread():void
         + Stop():void
     }
     note top of PeriodicNotifier
         ・定期的に座席状態の更新を通知するクラス
-        ・コンストラクタで通知先を登録する
-        ・executeメソッドから1分毎に座席の状態をdestinationに通知する
+        ・ScreenのUpdateメソッドとToastNotifierのNotifyメソッドを通知先として想定
+        ・SeatMonitoringThreadメソッドから1分毎に座席の状態をdestinationに通知する
+    end note
+
+    interface IToastNotifier {
+        + Notify(List<Seat>):void
+    }
+
+    class ToastNotifier {
+        - toastNotificationManager:MyToastNotificationManager
+        + ToastNotifier(toastNotificationManager:MyToastNotificationManager)
+        - seats:List<Seat>
+        + Notify(List<Seat>):void
+    }
+    note top of ToastNotifier
+        ・状態の変化があった座席について、トースト通知を送信するクラス
+    end note
+
+    interface IMyToastNotificationManager {
+        + Show(applicationId:string, notification:ToastNotification):void
+    }
+
+    class MyToastNotificationManager {
+        + Show(applicationId:string, notification:ToastNotification):void
+    }
+    note top of MyToastNotificationManager
+        ・Windows.UI.Notifications.ToastNotificationManagerクラスと
+        　Windows.UI.Notifications.ToatNotifierクラスをラップしたクラス
     end note
 
     class "Seat" as ClientSeat {
@@ -126,10 +155,20 @@ package CppDll {
     }
 }
 
-SeatMonitoringApplication -left-> ClientConfiguration
-SeatMonitoringApplication --> Screen
+SeatMonitoringApplication -down-> Screen
 Screen -left-> PeriodicNotifier
+SeatMonitoringApplication --> PeriodicNotifier
+PeriodicNotifier ..|> IPeriodicNotifier
+SeatMonitoringApplication --> SeatMonitoringApiClient
+SeatMonitoringApplication --> ToastNotifier
+ToastNotifier .left.|> IToastNotifier
+ToastNotifier --> PeriodicNotifier
+SeatMonitoringApplication -left-> MyToastNotificationManager
+MyToastNotificationManager .left.|> IMyToastNotificationManager
 PeriodicNotifier --> SeatMonitoringApiClient
+SeatMonitoringApiClient .|> ISeatMonitoringApiClient
+MyToastNotificationManager -> ToastNotifier
+
 SeatMonitoringApiClient -left-> ClientSeat
 SeatMonitoringApiClient -down-> SeatsController
 SeatsController -left-> SeatsScanner
