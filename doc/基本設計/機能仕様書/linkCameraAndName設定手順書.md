@@ -5,7 +5,7 @@
 - 監視座席名をキー"Name"、デバイスインスタンスパスをキー"DeviceInstansePath"で書き込む
 - NameとDeviceInstansePath1つずつを1人分とし、座席数分を配列形式で書き込む
 - Seat Monitoring APIではファイルの書き込み順にリストを作成する
-- 同じ監視座席名も使用できる
+- 同じ監視座席名は推奨しない
 
 ## 監視座席を追加するとき
 

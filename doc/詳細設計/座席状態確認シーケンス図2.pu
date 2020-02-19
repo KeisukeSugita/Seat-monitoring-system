@@ -45,7 +45,7 @@ end note
 create SeatMonitoringApiClient
 PeriodicNotifier -> SeatMonitoringApiClient :new SeatMonitoringApiClient(ipAddress:string)
 
-loop stopFlagがfalseの間
+loop isStopRequestedがfalseの間
 	PeriodicNotifier -> SeatMonitoringApiClient : GetSeats()
 	activate SeatMonitoringApiClient
 
@@ -133,14 +133,18 @@ loop stopFlagがfalseの間
 	activate Screen
 	PeriodicNotifier <- Screen
 	deactivate Screen
-	
-	PeriodicNotifier -> ToastNotifier : Notify(List<Seat>)
-	activate ToastNotifier
-	PeriodicNotifier <- ToastNotifier
-	deactivate ToastNotifier
-	
+
+	alt toastDestinationに通知先が登録されている場合	
+		PeriodicNotifier -> ToastNotifier : Notify(List<Seat>)
+		activate ToastNotifier
+		PeriodicNotifier <- ToastNotifier
+		deactivate ToastNotifier
+	else toastDestinationに通知先が登録されていない場合
+
+	end
+	|||
 	deactivate PeriodicNotifier
-	note right
+	note over SeatMonitoringApiClient
 		PeriodicNotifierのdestinationに登録されたメソッドが終了するまでの処理時間を計測し、
 		loop内の処理時間が60秒になるように待機する処理を行う
 		SeatMonitoringAPIからのレスポンスが60秒以上無かった場合、

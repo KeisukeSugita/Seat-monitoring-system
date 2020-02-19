@@ -38,34 +38,41 @@ package 座席監視アプリ {
     }
     note top of PeriodicNotifier
         ・定期的に座席状態の更新を通知するクラス
-        ・ScreenのUpdateメソッドとToastNotifierのNotifyメソッドを通知先として想定
+        ・ScreenのUpdateメソッドとSeatToastNotifierのNotifyメソッドをdestinationに登録
         ・SeatMonitoringThreadメソッドから1分毎に座席の状態をdestinationに通知する
     end note
 
-    interface IToastNotifier {
+    interface ISeatToastNotifier {
         + Notify(List<Seat>):void
     }
 
-    class ToastNotifier {
-        - toastNotificationManager:MyToastNotificationManager
-        + ToastNotifier(toastNotificationManager:MyToastNotificationManager)
+    class SeatToastNotifier {
+        - toastNotificationManager:WrapperToastNotificationManager
         - seats:List<Seat>
+        + SeatToastNotifier(toastNotificationManager:WrapperToastNotificationManager)
         + Notify(List<Seat>):void
     }
-    note top of ToastNotifier
-        ・状態の変化があった座席について、トースト通知を送信するクラス
+    note top of SeatToastNotifier
+        ・座席の状態が変化した座席について、その変更をトースト通知するクラス
     end note
 
-    interface IMyToastNotificationManager {
-        + Show(applicationId:string, notification:ToastNotification):void
+    interface IWrapperToastNotificationManager {
+        + Show(toastNotification:ToastNotification):void
     }
 
-    class MyToastNotificationManager {
-        + Show(applicationId:string, notification:ToastNotification):void
+    class WrapperToastNotificationManager {
+        - SeattoastNotifier:ToatNotifier
+        + WrapperToastNotificationManager(appId:string)
+        + Show(toastNotification:ToastNotification):void
     }
-    note top of MyToastNotificationManager
-        ・Windows.UI.Notifications.ToastNotificationManagerクラスと
-        　Windows.UI.Notifications.ToatNotifierクラスをラップしたクラス
+    note top of WrapperToastNotificationManager
+        ・ToastNotificationManagerクラスとToatNotifierクラスをラップしたクラス
+        ・コンストラクタでToastNotificationManagerクラスの
+        　CreateSeatToastNotifierメソッドに引数のappIdを渡して
+        　ToatNotifierクラスのインスタンスを生成し、フィールドに格納する
+        ・ShowメソッドではSeatToastNotifierで生成した、トースト通知の詳細情報が入った
+        　ToastNotificationクラスのインスタンスを引数にとり、
+        　ToatNotifierクラスのShowメソッドを呼び出してToast通知を送信する
     end note
 
     class "Seat" as ClientSeat {
@@ -155,19 +162,19 @@ package CppDll {
     }
 }
 
-SeatMonitoringApplication -down-> Screen
-Screen -left-> PeriodicNotifier
+SeatMonitoringApplication --> Screen
+Screen --> PeriodicNotifier
 SeatMonitoringApplication --> PeriodicNotifier
 PeriodicNotifier ..|> IPeriodicNotifier
 SeatMonitoringApplication --> SeatMonitoringApiClient
-SeatMonitoringApplication --> ToastNotifier
-ToastNotifier .left.|> IToastNotifier
-ToastNotifier --> PeriodicNotifier
-SeatMonitoringApplication -left-> MyToastNotificationManager
-MyToastNotificationManager .left.|> IMyToastNotificationManager
+SeatMonitoringApplication --> SeatToastNotifier
+SeatToastNotifier ..|> ISeatToastNotifier
+PeriodicNotifier --> SeatToastNotifier
+SeatMonitoringApplication --> WrapperToastNotificationManager
+WrapperToastNotificationManager ..|> IWrapperToastNotificationManager
 PeriodicNotifier --> SeatMonitoringApiClient
 SeatMonitoringApiClient .|> ISeatMonitoringApiClient
-MyToastNotificationManager -> ToastNotifier
+SeatToastNotifier -> WrapperToastNotificationManager
 
 SeatMonitoringApiClient -left-> ClientSeat
 SeatMonitoringApiClient -down-> SeatsController
