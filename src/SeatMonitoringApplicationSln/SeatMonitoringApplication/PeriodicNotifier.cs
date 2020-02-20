@@ -12,16 +12,14 @@ namespace SeatMonitoringApplication
     /// </summary>
     public class PeriodicNotifier : IPeriodicNotifier
     {
-        public delegate void Destination(List<Seat> seats, bool isSucceeded);
         private ISeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
-        private Destination destination;
+        public Action<List<Seat>, bool> Destination { get; set; }
         private readonly int interval;
         private Task task;
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public PeriodicNotifier(Destination destination, ISeatMonitoringApiClient seatMonitoringApiClient, int interval = 60 * 1000)
+        public PeriodicNotifier(ISeatMonitoringApiClient seatMonitoringApiClient, int interval = 60 * 1000)
         {
-            this.destination = destination;
             SeatMonitoringApiClient = seatMonitoringApiClient;
             this.interval = interval;
         }
@@ -43,12 +41,12 @@ namespace SeatMonitoringApplication
                         // SeatMonitoringAPIの結果を取得
                         seats = SeatMonitoringApiClient.GetSeats();
                         // 結果を通知
-                        destination(seats, true);
+                        Destination(seats, true);
                     }
                     catch(SeatsApiException)
                     {
                         // 結果を通知
-                        destination(seats, false);
+                        Destination(seats, false);
                     }
 
                     stopwatch.Stop();

@@ -4,16 +4,11 @@ hide footbox
 participant "Screen" as Screen
 participant "PeriodicNotifier" as PeriodicNotifier
 
--> Screen :Show(Configuration)
-Screen -> Screen :画面表示イベント 以降非同期処理
+-> Screen :Show()
+Screen -> Screen :画面表示イベント
 activate Screen
-create PeriodicNotifier
-Screen -> PeriodicNotifier :new PeriodicNotifier(Update())
-note right
-	コンストラクタで通知先を登録する
-end note
 
-Screen -> PeriodicNotifier :Start(Configuration)
+Screen -> PeriodicNotifier :Start()
 activate PeriodicNotifier
 Screen <- PeriodicNotifier
 deactivate PeriodicNotifier
@@ -22,7 +17,7 @@ note right
 	1分毎に以下の処理を非同期に行う
 	・座席の写真を撮影
 	・撮影した写真から座席状態を確認
-	・確認結果で画面を更新する
+	・確認結果で画面を更新、状態の変化を通知する
 	詳細を別図(座席状態確認シーケンス図2)に示す
 end note
 
