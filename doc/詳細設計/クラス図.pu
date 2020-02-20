@@ -47,7 +47,7 @@ package 座席監視アプリ {
     }
 
     class SeatToastNotifier {
-        - toastNotificationManager:WrapperToastNotificationManager
+        - toastNotificationManager:IWrapperToastNotificationManager
         - seats:List<Seat>
         + SeatToastNotifier(toastNotificationManager:WrapperToastNotificationManager)
         + Notify(List<Seat>):void
@@ -163,18 +163,18 @@ package CppDll {
 }
 
 SeatMonitoringApplication --> Screen
-Screen --> PeriodicNotifier
+Screen --> IPeriodicNotifier
 SeatMonitoringApplication --> PeriodicNotifier
 PeriodicNotifier ..|> IPeriodicNotifier
 SeatMonitoringApplication --> SeatMonitoringApiClient
 SeatMonitoringApplication --> SeatToastNotifier
 SeatToastNotifier ..|> ISeatToastNotifier
-PeriodicNotifier --> SeatToastNotifier
+PeriodicNotifier --> ISeatToastNotifier
 SeatMonitoringApplication --> WrapperToastNotificationManager
 WrapperToastNotificationManager ..|> IWrapperToastNotificationManager
-PeriodicNotifier --> SeatMonitoringApiClient
+PeriodicNotifier --> ISeatMonitoringApiClient
 SeatMonitoringApiClient .|> ISeatMonitoringApiClient
-SeatToastNotifier -> WrapperToastNotificationManager
+SeatToastNotifier -> IWrapperToastNotificationManager
 
 SeatMonitoringApiClient -left-> ClientSeat
 SeatMonitoringApiClient -down-> SeatsController
