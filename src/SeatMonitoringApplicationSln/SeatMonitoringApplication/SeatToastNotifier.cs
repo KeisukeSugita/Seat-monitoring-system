@@ -55,6 +55,11 @@ namespace SeatMonitoringApplication
             }
             else
             {
+                if (currentSeats == null)
+                {
+                    pastSeats = currentSeats;
+                    return;
+                }
                 var statusChangeSeats = currentSeats.Where(currentSeat =>
                 {
                     foreach (var pastSeat in pastSeats)
