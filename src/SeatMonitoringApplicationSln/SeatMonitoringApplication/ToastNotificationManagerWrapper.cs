@@ -9,13 +9,16 @@ using Windows.UI.Notifications;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// ToastNotificationManagerクラス、ToastNotifierクラス、ToastNotificationクラスをラップしたクラス
+    /// <see cref="ToastNotificationManager"/>
+    /// <see cref="ToastNotifier"/>
+    /// <see cref="ToastNotification"/>
+    /// 上記クラスをラップしたクラス
     /// </summary>
     class ToastNotificationManagerWrapper :IToastNotificationManagerWrapper
     {
         /// <summary>
-        /// ToastNotifierクラスのShowメソッドと
-        /// ToastNotificationManagerクラスのCreateToastNotifierメソッド
+        /// <see cref="ToastNotifier"/>のShowメソッドと
+        /// <see cref="ToastNotificationManager"/>のCreateToastNotifierメソッド
         /// をラップしたメソッド
         /// </summary>
         /// <param name="applicationId">通知を発行するアプリのApplicationID</param>
