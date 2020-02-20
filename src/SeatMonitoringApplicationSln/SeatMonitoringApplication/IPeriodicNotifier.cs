@@ -8,8 +8,6 @@ namespace SeatMonitoringApplication
 {
     public interface IPeriodicNotifier
     {
-        Action<List<Seat>, bool> Destination { get; set; }
-
         void Start();
         void Stop();
     }
