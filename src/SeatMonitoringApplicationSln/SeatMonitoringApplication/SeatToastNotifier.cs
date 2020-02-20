@@ -88,17 +88,17 @@ namespace SeatMonitoringApplication
             if (isSucceeded)
             {
                 iconName = seat.SeatStatusLabel[seat.status];
-                switch (seat.SeatStatusLabel[seat.status])
+                switch (seat.status)
                 {
-                    case "在席":
+                    case Seat.SeatStatus.Exists:
                         text = $@"""{seat.name}""さんは在席しています。";
                         break;
 
-                    case "離席":
+                    case Seat.SeatStatus.NotExists:
                         text = $@"""{seat.name}""さんが離席しました。";
                         break;
 
-                    case "不明":
+                    case Seat.SeatStatus.Failure:
                         text = $@"""{seat.name}""さんの状態取得に失敗しました。";
                         break;
 
