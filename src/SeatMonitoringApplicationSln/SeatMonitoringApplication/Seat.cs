@@ -16,16 +16,8 @@ namespace SeatMonitoringApplication
         {
             Exists,
             NotExists,
-            Failure,
+            Failure
         }
-
-        public readonly Dictionary<SeatStatus, string> SeatStatusLabel = new Dictionary<SeatStatus, string>
-        {
-            { SeatStatus.Exists, "在席" },
-            { SeatStatus.NotExists, "離席" },
-            { SeatStatus.Failure, "不明" },
-        };
-
 
         [DataMember(Name = "Name")]
         public readonly string name;

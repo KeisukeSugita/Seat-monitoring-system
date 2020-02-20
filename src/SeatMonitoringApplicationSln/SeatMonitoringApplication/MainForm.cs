@@ -31,6 +31,9 @@ namespace SeatMonitoringApplication
             ConectingError
         }
 
+
+        public IMyHttpClient httpClient = new MyHttpClient();
+
         /// <summary>
         /// ToolTipTextsから表示名を取得して返すメソッド
         /// </summary>
@@ -45,16 +48,25 @@ namespace SeatMonitoringApplication
         }
 
         private IPeriodicNotifier PeriodicNotifier { get; set; }
-        
+        public MainForm()
+        {
+            PeriodicNotifier.Destination destination = Update;
+            string host = ConfigurationManager.AppSettings["Host"];
+            if (host == null)
+            {
+                throw new ConfigurationErrorsException(@"""Host""が読み込めませんでした");
+            }
+            PeriodicNotifier = new PeriodicNotifier(destination, new SeatMonitoringApiClient(host, httpClient));
+            InitializeComponent();
+        }
+
         /// <summary>
-        /// PeriodicNotifierクラスのインスタンスをフィールドに格納し、
-        /// UpdateメソッドをPeriodicNotifierクラスの通知先として追加するコンストラクタ
+        /// テスト用コンストラクタ
         /// </summary>
         /// <param name="periodicNotifier"></param>
         public MainForm(IPeriodicNotifier periodicNotifier)
         {
             PeriodicNotifier = periodicNotifier;
-            PeriodicNotifier.Destination += Update;
             InitializeComponent();
         }
 
@@ -67,7 +79,7 @@ namespace SeatMonitoringApplication
 
         /// <summary>
         /// 画面を更新するメソッド
-        /// UIスレッドで更新を行いたいため、Invokeで処理を行う
+        /// UIスレッドで更新を行いたいため、InvokeUpdateメソッドをInvokeで呼び出す
         /// </summary>
         /// <param name="seats"></param>
         /// <param name="isSucceeded"></param>
@@ -127,6 +139,7 @@ namespace SeatMonitoringApplication
                 components.Dispose();
             }
             base.Dispose(disposing);
+            httpClient.Dispose();
         }
     }
 }
