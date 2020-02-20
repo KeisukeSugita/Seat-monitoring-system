@@ -41,12 +41,12 @@ namespace SeatMonitoringApplication
                         // SeatMonitoringAPIの結果を取得
                         seats = SeatMonitoringApiClient.GetSeats();
                         // 結果を通知
-                        Destination(seats, true);
+                        Destination?.Invoke(seats, true);
                     }
                     catch(SeatsApiException)
                     {
                         // 結果を通知
-                        Destination(seats, false);
+                        Destination?.Invoke(seats, false);
                     }
 
                     stopwatch.Stop();
