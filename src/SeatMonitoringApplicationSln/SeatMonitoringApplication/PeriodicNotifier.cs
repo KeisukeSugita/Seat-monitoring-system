@@ -13,6 +13,10 @@ namespace SeatMonitoringApplication
     public class PeriodicNotifier : IPeriodicNotifier
     {
         private ISeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
+        /// <summary>
+        ///  Startメソッドの中で1分毎に実行されるメソッド
+        ///  座席の状態を通知させたいメソッドを登録できる
+        /// </summary>
         public Action<List<Seat>, bool> Destination { get; set; }
         private readonly int interval;
         private Task task;
