@@ -1,4 +1,4 @@
-@startuml システム終了シーケンス図
+@startuml アプリ終了シーケンス図
 hide footbox
 
 participant "Screen" as Screen
