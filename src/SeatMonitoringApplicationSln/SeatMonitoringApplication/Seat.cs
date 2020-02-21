@@ -23,7 +23,7 @@ namespace SeatMonitoringApplication
         {
             { SeatStatus.Exists, "在席" },
             { SeatStatus.NotExists, "離席" },
-            { SeatStatus.Failure, "不明" },
+            { SeatStatus.Failure, "状態取得失敗" },
         };
 
 
