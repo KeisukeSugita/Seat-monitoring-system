@@ -137,7 +137,7 @@ namespace SeatMonitoringApplication
 
             var toastContent = new ToastContent()
             {
-                Header = new ToastHeader("0001", "座席監視アプリ", ""),
+                Header = new ToastHeader("Seat Monitoring Application-Toast Notification", "座席監視アプリ", ""),
 
                 Visual = new ToastVisual()
                 {
