@@ -26,12 +26,17 @@ namespace Setup
             // 作業フォルダ
             shortcut.WorkingDirectory = Application.StartupPath;
 
-            // ショートカットを作成
-            shortcut.Save();
-
-            // 参照の解放
-            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(shortcut);
-            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(wshShell);
+            try
+            {
+                // ショートカットを作成
+                shortcut.Save();
+            }
+            finally
+            {
+                // 参照の解放
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(shortcut);
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(wshShell);
+            }
         }
     }
 }
