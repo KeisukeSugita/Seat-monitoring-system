@@ -4,7 +4,7 @@ using System.Net.Http;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// HttpClientクラスの一部を実装したクラス
+    /// <see cref="HttpClient"/>クラスの一部を実装したクラス
     /// このクラスを介してHttpClientを利用する
     /// </summary>
     class MyHttpClient : IMyHttpClient
