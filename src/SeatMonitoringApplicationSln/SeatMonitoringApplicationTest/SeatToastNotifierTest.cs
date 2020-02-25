@@ -100,15 +100,12 @@ namespace SeatMonitoringApplicationTest
             secondTimeSeats.Add(new Seat("サトウ　タロウ", Seat.SeatStatus.Exists));
 
             var seatToastNotifier = new SeatToastNotifier(toastNotificationManagerMock.Object, Application.ExecutablePath);
-            var privateObject = new PrivateObject(seatToastNotifier);
 
             seatToastNotifier.Notify(firstTimeSeats, true);
-            Assert.AreEqual(firstTimeSeats, privateObject.GetField("pastSeats"));
             Assert.AreEqual(resultSeatToasts.Count, 0);
             Assert.AreEqual(callTimes, 0);
 
             seatToastNotifier.Notify(secondTimeSeats, true);
-            Assert.AreEqual(secondTimeSeats, privateObject.GetField("pastSeats"));
             Assert.AreEqual(resultSeatToasts.Count, 2);
             Assert.AreEqual(callTimes, 2);
 
@@ -173,16 +170,13 @@ namespace SeatMonitoringApplicationTest
             secondTimeSeats = null;
 
             var seatToastNotifier = new SeatToastNotifier(toastNotificationManagerMock.Object, Application.ExecutablePath);
-            var privateObject = new PrivateObject(seatToastNotifier);
 
             seatToastNotifier.Notify(firstTimeSeats, true);
-            Assert.AreEqual(firstTimeSeats, privateObject.GetField("pastSeats"));
             Assert.AreEqual(resultSeatToasts.Count, 0);
             Assert.AreEqual(callTimes, 0);
 
             // サーバ接続エラーのAssert
             seatToastNotifier.Notify(secondTimeSeats, false);
-            Assert.IsNull(privateObject.GetField("pastSeats"));
             Assert.AreEqual(resultSeatToasts.Count, 1);
             Assert.AreEqual(callTimes, 1);
 
@@ -219,16 +213,13 @@ namespace SeatMonitoringApplicationTest
             secondTimeSeats.Add(new Seat("サトウ　タロウ", Seat.SeatStatus.Exists));
 
             var seatToastNotifier = new SeatToastNotifier(toastNotificationManagerMock.Object, Application.ExecutablePath);
-            var privateObject = new PrivateObject(seatToastNotifier);
 
             seatToastNotifier.Notify(firstTimeSeats, false);
-            Assert.IsNull(privateObject.GetField("pastSeats"));
             Assert.AreEqual(resultSeatToasts.Count, 0);
             Assert.AreEqual(callTimes, 0);
 
             // サーバ接続エラーから復帰した場合のAssert
             seatToastNotifier.Notify(secondTimeSeats, true);
-            Assert.AreEqual(secondTimeSeats, privateObject.GetField("pastSeats"));
             Assert.AreEqual(resultSeatToasts.Count, 0);
             Assert.AreEqual(callTimes, 0);
         }
