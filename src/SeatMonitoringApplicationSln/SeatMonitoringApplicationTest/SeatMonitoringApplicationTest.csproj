@@ -111,7 +111,6 @@
     <Compile Include="SeatMonitoringApiClientTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PeriodicNotifierTest.cs" />
-    <Compile Include="MainFormTest.cs" />
     <Compile Include="SeatToastNotifierTest.cs" />
   </ItemGroup>
   <ItemGroup>
