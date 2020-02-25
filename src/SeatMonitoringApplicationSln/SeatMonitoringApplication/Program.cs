@@ -24,8 +24,9 @@ namespace SeatMonitoringApplication
             }
 
             var httpClient = new MyHttpClient();
+            var statusIcon = new StatusIcon();
             var toastNotificationManager = new ToastNotificationManagerWrapper();
-            var seatToastNotifier = new SeatToastNotifier(toastNotificationManager, Application.ExecutablePath);
+            var seatToastNotifier = new SeatToastNotifier(toastNotificationManager, Application.ExecutablePath, statusIcon);
             var periodicNotifier = new PeriodicNotifier(new SeatMonitoringApiClient(host, httpClient));
 
             try
@@ -47,7 +48,7 @@ namespace SeatMonitoringApplication
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm(periodicNotifier));
+                Application.Run(new MainForm(periodicNotifier, statusIcon));
             }
             catch (Exception)
             {
