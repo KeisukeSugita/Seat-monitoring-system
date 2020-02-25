@@ -19,12 +19,25 @@ namespace SeatMonitoringApplication
             Failure,
         }
 
-        public readonly Dictionary<SeatStatus, string> SeatStatusLabel = new Dictionary<SeatStatus, string>
+        /// <summary>
+        /// <see cref="SeatStatus"/>の値に対応する文字列を定義したDictionary
+        /// </summary>
+        private readonly Dictionary<SeatStatus, string> SeatStatusLabel = new Dictionary<SeatStatus, string>
         {
             { SeatStatus.Exists, "在席" },
             { SeatStatus.NotExists, "離席" },
             { SeatStatus.Failure, "状態取得失敗" },
         };
+
+        /// <summary>
+        /// <see cref="SeatStatus"/>から<see cref="SeatStatusLabel"/>に定義されている文字列を取得するメソッド
+        /// </summary>
+        /// <param name="seatStatus"></param>
+        /// <returns></returns>
+        public string GetLabel(SeatStatus seatStatus)
+        {
+            return SeatStatusLabel[seatStatus];
+        }
 
 
         [DataMember(Name = "Name")]
