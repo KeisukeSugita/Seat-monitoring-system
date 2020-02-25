@@ -22,40 +22,40 @@ namespace SeatMonitoringApplication
                 MessageBox.Show(@"""Host""が読み込めませんでした", "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            // 通知設定の読み込み
-            string isNotify = ConfigurationManager.AppSettings["IsNotify"];
-            if (isNotify == null)
-            {
-                MessageBox.Show(@"""isNotify""が読み込めませんでした", "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
 
             var httpClient = new MyHttpClient();
             var toastNotificationManager = new ToastNotificationManagerWrapper();
             var seatToastNotifier = new SeatToastNotifier(toastNotificationManager, Application.ExecutablePath);
-            
             var periodicNotifier = new PeriodicNotifier(new SeatMonitoringApiClient(host, httpClient));
 
             try
             {
-                if (Convert.ToBoolean(ConfigurationManager.AppSettings["IsNotify"]))
+                // 通知設定の読み込み
+                if (bool.TryParse(ConfigurationManager.AppSettings["IsNotify"], out bool isNotify))
                 {
                     // 通知設定がtrueならトースト通知を通知先として追加する
-                    periodicNotifier.Destination += seatToastNotifier.Notify;
+                    if (isNotify)
+                    {
+                        periodicNotifier.Destination += seatToastNotifier.Notify;
+                    }
                 }
+                else
+                {
+                    MessageBox.Show(@"""isNotify""が読み込めませんでした", "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainForm(periodicNotifier));
             }
-            catch(FormatException)
+            catch (Exception)
             {
-                // 通知設定のbool変換に失敗した場合
-                MessageBox.Show(@"""isNotify""の値は""true""か""false""に設定してください", "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(periodicNotifier));
-
-            httpClient.Dispose();
+            finally
+            {
+                httpClient.Dispose();
+            }
         }
     }
 }
