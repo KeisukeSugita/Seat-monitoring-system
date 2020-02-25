@@ -88,7 +88,11 @@ namespace SeatMonitoringApplication
                     statusChangeSeats = currentSeats;
                     wasSucceeded = isSucceeded;
                 }
-                statusChangeSeats.ForEach(statusChangeSeat => toastNotificationManager.Show(applicationId, CreateToastNotification(statusChangeSeat, isSucceeded)));
+
+                foreach (Seat statusChangeSeat in statusChangeSeats)
+                {
+                    toastNotificationManager.Show(applicationId, CreateToastNotification(statusChangeSeat, isSucceeded));
+                }
                 pastSeats = currentSeats;
             }
         }
