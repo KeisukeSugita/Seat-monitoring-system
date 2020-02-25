@@ -13,6 +13,13 @@ namespace SeatMonitoringApplication
     /// </summary>
     public interface IToastNotificationManagerWrapper
     {
+        /// <summary>
+        /// <see cref="ToastNotifier"/>のShowメソッドと
+        /// <see cref="ToastNotificationManager"/>のCreateToastNotifierメソッド
+        /// をラップしたメソッド
+        /// </summary>
+        /// <param name="applicationId">通知を発行するアプリのApplicationID</param>
+        /// <param name="xmlDocument">トースト通知の内容が記述されたXml</param>
         void Show(string applicationId, XmlDocument xmlDocument);
     }
 }
