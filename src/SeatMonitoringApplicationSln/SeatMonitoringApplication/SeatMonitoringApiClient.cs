@@ -26,7 +26,7 @@ namespace SeatMonitoringApplication
         /// <summary>
         /// GetSeatsメソッドを呼び出し、結果をアプリが解釈しやすい形に変換するメソッド
         /// </summary>
-        /// <returns></returns>
+        /// <returns>取得した座席情報のリスト</returns>
         public List<Seat> GetSeats()
         {
             HttpResponseMessage responseMessage;
