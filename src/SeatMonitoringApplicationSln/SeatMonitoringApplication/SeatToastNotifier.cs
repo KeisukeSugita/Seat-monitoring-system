@@ -26,15 +26,18 @@ namespace SeatMonitoringApplication
         // 前回の通知の監視座席名とその状態取得に成功していたか否かを保持する
         private bool wasSucceeded = true;
 
+        private IStatusIcon statusIcon;
+
         /// <summary>
         /// フィールドの初期化を行うコンストラクタ
         /// </summary>
         /// <param name="toastNotificationManager">トースト通知機能をラップしたインターフェース</param>
         /// <param name="applicationId">トースト通知を出すアプリケーションを指定するID</param>
-        public SeatToastNotifier(IToastNotificationManagerWrapper toastNotificationManager, string applicationId)
+        public SeatToastNotifier(IToastNotificationManagerWrapper toastNotificationManager, string applicationId, IStatusIcon statusIcon)
         {
             this.toastNotificationManager = toastNotificationManager;
             this.applicationId = applicationId;
+            this.statusIcon = statusIcon;
         }
 
         /// <summary>
@@ -110,7 +113,7 @@ namespace SeatMonitoringApplication
 
             if (isSucceeded)
             {
-                iconName = seat.SeatStatusLabel[seat.status];
+                iconName = seat.GetLabel(seat.status);
                 switch (seat.status)
                 {
                     case Seat.SeatStatus.Exists:
@@ -135,6 +138,8 @@ namespace SeatMonitoringApplication
                 text = "サーバへの接続に失敗しました。";
             }
 
+
+
             var toastContent = new ToastContent()
             {
                 Header = new ToastHeader("Seat Monitoring Application-Toast Notification", "座席監視アプリ", ""),
@@ -145,7 +150,7 @@ namespace SeatMonitoringApplication
                     {
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = $@"{Application.StartupPath}\Icons\{iconName}アイコン.png",
+                            Source = statusIcon.GetIcon(iconName),
                             HintCrop = ToastGenericAppLogoCrop.Default
                         },
 
