@@ -81,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ISeatToastNotifier.cs" />
-    <Compile Include="IStatusIcon.cs" />
     <Compile Include="IToastNotificationManagerWrapper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -147,6 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icons\サーバ接続エラーアイコン.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icons\サーバ接続エラー復帰アイコン.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icons\在席アイコン.png">
