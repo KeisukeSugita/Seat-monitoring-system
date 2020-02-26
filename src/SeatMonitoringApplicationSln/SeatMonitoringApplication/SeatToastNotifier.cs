@@ -20,13 +20,15 @@ namespace SeatMonitoringApplication
         // 通知機能の部分をラップしたインターフェース
         private readonly IToastNotificationManagerWrapper toastNotificationManager;
 
-        // 前回の通知の監視座席名とその状態を、通知した座席に限らず全て保持する
-        private List<Seat> pastSeats = null;
+        /// <summary>
+        /// <see cref="Notify(List{Seat}, bool)"/>に渡された第1引数のseatsを保持する
+        /// </summary>
+        private List<Seat> latestSeats = null;
 
-        // 前回の通知の監視座席名とその状態取得に成功していたか否かを保持する
-        private bool pastSucceeded = true;
-
-        private StatusIcon statusIcon = new StatusIcon();
+        /// <summary>
+        /// <see cref="Notify(List{Seat}, bool)"/>に渡された第2引数のisSucceededを保持する
+        /// </summary>
+        private bool latestIsSucceeded = true;
 
         /// <summary>
         /// フィールドの初期化を行うコンストラクタ
@@ -42,35 +44,35 @@ namespace SeatMonitoringApplication
         /// <summary>
         /// <see cref="ISeatToastNotifier.Notify(List{Seat}, bool)"/>
         /// </summary>
-        public void Notify(List<Seat> latestSeats, bool latestSucceeded)
+        public void Notify(List<Seat> Seats, bool isSucceeded)
         {
             // アプリ起動後初回の通知時
-            if (pastSeats == null)
+            if (latestSeats == null)
             {
-                pastSeats = latestSeats;
-                pastSucceeded = latestSucceeded;
+                latestSeats = Seats;
+                latestIsSucceeded = isSucceeded;
                 return;
             }
 
             // 状態取得に失敗した通知が来た時
-            if (!latestSucceeded)
+            if (!isSucceeded)
             {
                 // 前回の通知が状態取得に成功していた場合、サーバエラーをトースト通知する
-                if (pastSucceeded)
+                if (latestIsSucceeded)
                 {
-                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, latestSucceeded, pastSucceeded));
-                    pastSucceeded = latestSucceeded;
+                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, isSucceeded));
+                    latestIsSucceeded = isSucceeded;
                 }
                 return;
             }
             else
             {
                 var statusChangeSeats = new List<Seat>();
-                if (pastSucceeded)
+                if (latestIsSucceeded)
                 {
-                    statusChangeSeats = latestSeats.Where(currentSeat =>
+                    statusChangeSeats = Seats.Where(currentSeat =>
                     {
-                        foreach (var pastSeat in pastSeats)
+                        foreach (var pastSeat in latestSeats)
                         {
                             if (pastSeat.name == currentSeat.name)
                             {
@@ -83,17 +85,17 @@ namespace SeatMonitoringApplication
                     
                     foreach (Seat statusChangeSeat in statusChangeSeats)
                     {
-                        toastNotificationManager.Show(applicationId, CreateToastNotification(statusChangeSeat, latestSucceeded, pastSucceeded));
+                        toastNotificationManager.Show(applicationId, CreateToastNotification(statusChangeSeat, isSucceeded));
                     }
                 }
                 // サーバエラーから復帰した場合
                 else
                 {
-                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, latestSucceeded, pastSucceeded));
+                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, isSucceeded));
                 }
 
-                pastSucceeded = latestSucceeded;
-                pastSeats = latestSeats;
+                latestIsSucceeded = isSucceeded;
+                latestSeats = Seats;
             }
         }
 
@@ -103,27 +105,27 @@ namespace SeatMonitoringApplication
         /// <param name="seat">監視座席名と座席状態</param>
         /// <param name="isSucceeded">監視座席の状態取得の可否</param>
         /// <returns>作成されたXml</returns>
-        private XmlDocument CreateToastNotification(Seat seat, bool isSucceeded, bool wasSucceeded)
+        private XmlDocument CreateToastNotification(Seat seat, bool isSucceeded)
         {
             string icon = null;
             string text = null;
 
-            if (isSucceeded && wasSucceeded)
+            if (isSucceeded && latestIsSucceeded)
             {
                 switch (seat.status)
                 {
                     case Seat.SeatStatus.Exists:
-                        icon = statusIcon.GetExistIcon();
+                        icon = StatusIcon.GetExistIcon();
                         text = $@"""{seat.name}""さんは在席しています。";
                         break;
 
                     case Seat.SeatStatus.NotExists:
-                        icon = statusIcon.GetNotExistIcon();
+                        icon = StatusIcon.GetNotExistIcon();
                         text = $@"""{seat.name}""さんが離席しました。";
                         break;
 
                     case Seat.SeatStatus.Failure:
-                        icon = statusIcon.GetFailureIcon();
+                        icon = StatusIcon.GetFailureIcon();
                         text = $@"""{seat.name}""さんの状態取得に失敗しました。";
                         break;
 
@@ -131,14 +133,14 @@ namespace SeatMonitoringApplication
                         break;
                 }
             }
-            else if (isSucceeded && !wasSucceeded)
+            else if (isSucceeded && !latestIsSucceeded)
             {
-                icon = statusIcon.GetReturnFromErrorIcon();
+                icon = StatusIcon.GetReturnFromErrorIcon();
                 text = "サーバ接続エラーから復帰しました。";
             }
             else
             {
-                icon = statusIcon.GetErrorIcon();
+                icon = StatusIcon.GetErrorIcon();
                 text = "サーバへの接続に失敗しました。";
             }
 
