@@ -16,7 +16,7 @@ namespace SeatMonitoringApplication
         /// <summary>
         /// HttpClientクラスのGetAsyncメソッドの結果を返すメソッド
         /// </summary>
-        /// <param name="requestUri"></param>
+        /// <param name="requestUri">HTTPリクエストを送信するURI</param>
         /// <returns>レスポンスメッセージ</returns>
         HttpResponseMessage GetAsync(string requestUri);
     }
