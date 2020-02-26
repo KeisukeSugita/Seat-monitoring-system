@@ -17,6 +17,11 @@ namespace SeatMonitoringApplication
         private string Host { get; set; }
         private IMyHttpClient HttpClient { get; set; }
 
+        /// <summary>
+        /// メンバ変数を初期化するコンストラクタ
+        /// </summary>
+        /// <param name="host">アクセス先のホスト名</param>
+        /// <param name="httpClient"><see cref="MyHttpClient"/>のインスタンス</param>
         public SeatMonitoringApiClient(string host, IMyHttpClient httpClient)
         {
             Host = host;
