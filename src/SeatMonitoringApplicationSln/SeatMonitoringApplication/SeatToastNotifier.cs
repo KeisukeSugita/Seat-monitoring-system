@@ -20,11 +20,11 @@ namespace SeatMonitoringApplication
         // 通知機能の部分をラップしたインターフェース
         private readonly IToastNotificationManagerWrapper toastNotificationManager;
 
-        // 前回の通知の監視座席名とその状態を保持する
+        // 前回の通知の監視座席名とその状態を、通知した座席に限らず全て保持する
         private List<Seat> pastSeats = null;
 
         // 前回の通知の監視座席名とその状態取得に成功していたか否かを保持する
-        private bool wasSucceeded = true;
+        private bool pastSucceeded = true;
 
         private StatusIcon statusIcon = new StatusIcon();
 
@@ -42,33 +42,33 @@ namespace SeatMonitoringApplication
         /// <summary>
         /// <see cref="ISeatToastNotifier.Notify(List{Seat}, bool)"/>
         /// </summary>
-        public void Notify(List<Seat> currentSeats, bool isSucceeded)
+        public void Notify(List<Seat> latestSeats, bool latestSucceeded)
         {
             // アプリ起動後初回の通知時
             if (pastSeats == null)
             {
-                pastSeats = currentSeats;
-                wasSucceeded = isSucceeded;
+                pastSeats = latestSeats;
+                pastSucceeded = latestSucceeded;
                 return;
             }
 
             // 状態取得に失敗した通知が来た時
-            if (!isSucceeded)
+            if (!latestSucceeded)
             {
                 // 前回の通知が状態取得に成功していた場合、サーバエラーをトースト通知する
-                if (wasSucceeded)
+                if (pastSucceeded)
                 {
-                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, isSucceeded, wasSucceeded));
-                    wasSucceeded = isSucceeded;
+                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, latestSucceeded, pastSucceeded));
+                    pastSucceeded = latestSucceeded;
                 }
                 return;
             }
             else
             {
                 var statusChangeSeats = new List<Seat>();
-                if (wasSucceeded)
+                if (pastSucceeded)
                 {
-                    statusChangeSeats = currentSeats.Where(currentSeat =>
+                    statusChangeSeats = latestSeats.Where(currentSeat =>
                     {
                         foreach (var pastSeat in pastSeats)
                         {
@@ -83,17 +83,17 @@ namespace SeatMonitoringApplication
                     
                     foreach (Seat statusChangeSeat in statusChangeSeats)
                     {
-                        toastNotificationManager.Show(applicationId, CreateToastNotification(statusChangeSeat, isSucceeded, wasSucceeded));
+                        toastNotificationManager.Show(applicationId, CreateToastNotification(statusChangeSeat, latestSucceeded, pastSucceeded));
                     }
                 }
                 // サーバエラーから復帰した場合
                 else
                 {
-                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, isSucceeded, wasSucceeded));
+                    toastNotificationManager.Show(applicationId, CreateToastNotification(null, latestSucceeded, pastSucceeded));
                 }
 
-                wasSucceeded = isSucceeded;
-                pastSeats = currentSeats;
+                pastSucceeded = latestSucceeded;
+                pastSeats = latestSeats;
             }
         }
 
