@@ -14,18 +14,17 @@ namespace SeatMonitoringApplication
     public partial class MainForm : Form
     {
         private IPeriodicNotifier PeriodicNotifier { get; set; }
-        private IStatusIcon statusIcon;
+        private StatusIcon statusIcon = new StatusIcon();
         
         /// <summary>
         /// PeriodicNotifierクラスのインスタンスをフィールドに格納し、
         /// UpdateメソッドをPeriodicNotifierクラスの通知先として追加するコンストラクタ
         /// </summary>
         /// <param name="periodicNotifier"></param>
-        public MainForm(IPeriodicNotifier periodicNotifier, IStatusIcon statusIcon)
+        public MainForm(IPeriodicNotifier periodicNotifier)
         {
             PeriodicNotifier = periodicNotifier;
             PeriodicNotifier.Destination += Update;
-            this.statusIcon = statusIcon;
             InitializeComponent();
         }
 
@@ -36,10 +35,10 @@ namespace SeatMonitoringApplication
             smallImageList.ImageSize = new Size(16, 16);
             listView1.SmallImageList = smallImageList;
 
-            smallImageList.Images.Add("在席アイコン", Image.FromFile(statusIcon.GetIcon("在席")));
-            smallImageList.Images.Add("離席アイコン", Image.FromFile(statusIcon.GetIcon("離席")));
-            smallImageList.Images.Add("状態取得失敗アイコン", Image.FromFile(statusIcon.GetIcon("状態取得失敗")));
-            smallImageList.Images.Add("サーバ接続エラーアイコン", Image.FromFile(statusIcon.GetIcon("サーバ接続エラー")));
+            smallImageList.Images.Add("在席アイコン", Image.FromFile(statusIcon.GetExistIcon()));
+            smallImageList.Images.Add("離席アイコン", Image.FromFile(statusIcon.GetNotExistIcon()));
+            smallImageList.Images.Add("状態取得失敗アイコン", Image.FromFile(statusIcon.GetFailureIcon()));
+            smallImageList.Images.Add("サーバ接続エラーアイコン", Image.FromFile(statusIcon.GetErrorIcon()));
 
             PeriodicNotifier.Start();
         }
