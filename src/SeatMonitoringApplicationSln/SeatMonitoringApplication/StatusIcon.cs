@@ -10,16 +10,51 @@ namespace SeatMonitoringApplication
     /// <summary>
     /// 座席の状態を表すアイコンへのパスを取得するクラス
     /// </summary>
-    public class StatusIcon : IStatusIcon
+    public class StatusIcon
     {
         /// <summary>
-        /// 名前に対応するアイコンへの絶対パスを返すメソッド
+        /// 在席アイコンへの絶対パスを返すメソッド
         /// </summary>
-        /// <param name="iconName">アイコンの名前</param>
-        /// <returns>対応するアイコンへの絶対パス</returns>
-        public string GetIcon(string iconName)
+        /// <returns>在席アイコンへの絶対パス</returns>
+        public string GetExistIcon()
         {
-            return $@"{Application.StartupPath}\{iconName}アイコン.png";
+            return $@"{Application.StartupPath}\Icons\在席アイコン.png";
+        }
+
+        /// <summary>
+        /// 離席アイコンへの絶対パスを返すメソッド
+        /// </summary>
+        /// <returns>離席アイコンへの絶対パス</returns>
+        public string GetNotExistIcon()
+        {
+            return $@"{Application.StartupPath}\Icons\離席アイコン.png";
+        }
+
+        /// <summary>
+        /// 状態取得失敗アイコンへの絶対パスを返すメソッド
+        /// </summary>
+        /// <returns>状態取得失敗アイコンへの絶対パス</returns>
+        public string GetFailureIcon()
+        {
+            return $@"{Application.StartupPath}\Icons\状態取得失敗アイコン.png";
+        }
+
+        /// <summary>
+        /// サーバ接続エラーアイコンへの絶対パスを返すメソッド
+        /// </summary>
+        /// <returns>サーバ接続エラーアイコンへの絶対パス</returns>
+        public string GetErrorIcon()
+        {
+            return $@"{Application.StartupPath}\Icons\サーバ接続エラーアイコン.png";
+        }
+
+        /// <summary>
+        /// サーバ接続エラー復帰アイコンへの絶対パスを返すメソッド
+        /// </summary>
+        /// <returns>サーバ接続エラー復帰アイコンへの絶対パス</returns>
+        public string GetReturnFromErrorIcon()
+        {
+            return $@"{Application.StartupPath}\Icons\サーバ接続エラー復帰アイコン.png";
         }
     }
 }
