@@ -30,10 +30,13 @@ namespace SeatMonitoringApplication
         };
 
         /// <summary>
-        /// <see cref="SeatStatus"/>から<see cref="SeatStatusLabel"/>に定義されている文字列を取得するメソッド
+        /// <see cref="SeatStatus"/>から対応する文字列を取得するメソッド
+        /// ・Exists："在席"
+        /// ・NotExists："離席"
+        /// ・Failure："状態取得失敗"
         /// </summary>
-        /// <param name="seatStatus"></param>
-        /// <returns></returns>
+        /// <param name="seatStatus">文字列を取得したい<see cref="SeatStatus"/></param>
+        /// <returns>引数に対応する文字列</returns>
         public string GetLabel(SeatStatus seatStatus)
         {
             return SeatStatusLabel[seatStatus];
@@ -59,11 +62,10 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// 該当する文字列をenum SeatStatusに変換するクラス
-        /// status：enum SeatStatusに該当する文字列
+        /// 該当する文字列を<see cref="SeatStatus"/>に変換するクラス
         /// </summary>
-        /// <param name="status"></param>
-        /// <returns>変換されたenum SeatStatusの値</returns>
+        /// <param name="status">変換したい文字列</param>
+        /// <returns>変換された<see cref="SeatStatus"/>の値</returns>
         public SeatStatus FromString(string status)
         {
             if (status == Seat.SeatStatus.Exists.ToString())
