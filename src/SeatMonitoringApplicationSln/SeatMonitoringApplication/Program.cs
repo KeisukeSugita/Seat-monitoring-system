@@ -23,14 +23,12 @@ namespace SeatMonitoringApplication
                 return;
             }
 
-            var httpClient = new MyHttpClient();
-            var statusIcon = new StatusIcon();
-            var toastNotificationManager = new ToastNotificationManagerWrapper();
-            var seatToastNotifier = new SeatToastNotifier(toastNotificationManager, Application.ExecutablePath);
-            var periodicNotifier = new PeriodicNotifier(new SeatMonitoringApiClient(host, httpClient));
-
-            try
+            using (var httpClient = new MyHttpClient())
             {
+                var toastNotificationManager = new ToastNotificationManagerWrapper();
+                var seatToastNotifier = new SeatToastNotifier(toastNotificationManager, Application.ExecutablePath);
+                var periodicNotifier = new PeriodicNotifier(new SeatMonitoringApiClient(host, httpClient));
+
                 // 通知設定の読み込み
                 if (bool.TryParse(ConfigurationManager.AppSettings["IsNotify"], out bool isNotify))
                 {
@@ -49,13 +47,6 @@ namespace SeatMonitoringApplication
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new MainForm(periodicNotifier));
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                httpClient.Dispose();
             }
         }
     }
