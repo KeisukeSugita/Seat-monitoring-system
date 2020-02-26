@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// <see cref="HttpClient"/>クラスの一部を実装するインターフェース
-    /// このクラスを介してHttpClientを利用する
+    /// テスト用に<see cref="HttpClient"/>をラップするインターフェース
     /// </summary>
     public interface IMyHttpClient : IDisposable
     {

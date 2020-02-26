@@ -12,7 +12,7 @@ namespace SeatMonitoringApplication
     public interface ISeatMonitoringApiClient
     {
         /// <summary>
-        /// SeatMonitoringAPIのseatsを呼び出し、結果を<see cref="Seat"/>のリストに変換して返すメソッド
+        /// SeatMonitoringAPIのGETを呼び出し、結果を<see cref="Seat"/>のリストに変換して返すメソッド
         /// </summary>
         /// <returns>取得した座席情報のリスト</returns>
         List<Seat> GetSeats();
