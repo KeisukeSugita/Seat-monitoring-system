@@ -9,7 +9,10 @@ using Windows.UI.Notifications;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// トースト通知に必要なクラスをラップするインターフェース
+    /// <see cref="ToastNotificationManager"/>
+    /// <see cref="ToastNotifier"/>
+    /// <see cref="ToastNotification"/>
+    /// 上記クラスをラップしたクラス
     /// </summary>
     public interface IToastNotificationManagerWrapper
     {
