@@ -8,26 +8,33 @@ using System.Threading.Tasks;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// コンストラクタで指定されたメソッドに結果を通知するクラス
+    /// <see cref="IPeriodicNotifier"/>
     /// </summary>
     public class PeriodicNotifier : IPeriodicNotifier
     {
-        public delegate void Destination(List<Seat> seats, bool isSucceeded);
         private ISeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
-        private Destination destination;
+        /// <summary>
+        /// <see cref="IPeriodicNotifier.Destination"/>
+        /// </summary>
+        public Action<List<Seat>, bool> Destination { get; set; }
         private readonly int interval;
         private Task task;
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public PeriodicNotifier(Destination destination, ISeatMonitoringApiClient seatMonitoringApiClient, int interval = 60 * 1000)
+        /// <summary>
+        /// メンバ変数の初期化を行うコンストラクタ
+        /// </summary>
+        /// <param name="seatMonitoringApiClient"><see cref="ISeatMonitoringApiClient"/>のインスタンス</param>
+        /// <param name="interval"><see cref="Start"/>で開始する処理から通知が行われる時間間隔</param>
+        public PeriodicNotifier(ISeatMonitoringApiClient seatMonitoringApiClient, int interval = 60 * 1000)
         {
-            this.destination = destination;
             SeatMonitoringApiClient = seatMonitoringApiClient;
             this.interval = interval;
         }
 
         /// <summary>
-        /// 座席状態の取得と結果の通知を1分毎に非同期に行うメソッド
+        /// <see cref="IPeriodicNotifier.Start"/>
+        /// <see cref="ISeatMonitoringApiClient.GetSeats"/>の戻り値と、取得の可否を通知する
         /// </summary>
         public void Start()
         {            
@@ -43,12 +50,12 @@ namespace SeatMonitoringApplication
                         // SeatMonitoringAPIの結果を取得
                         seats = SeatMonitoringApiClient.GetSeats();
                         // 結果を通知
-                        destination(seats, true);
+                        Destination?.Invoke(seats, true);
                     }
                     catch(SeatsApiException)
                     {
                         // 結果を通知
-                        destination(seats, false);
+                        Destination?.Invoke(seats, false);
                     }
 
                     stopwatch.Stop();
@@ -63,7 +70,7 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// 非同期処理を終了させるメソッド
+        /// <see cref="IPeriodicNotifier.Stop"/>
         /// </summary>
         public void Stop()
         {

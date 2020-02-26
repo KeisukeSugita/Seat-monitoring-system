@@ -13,11 +13,12 @@ namespace SeatMonitoringApplicationTest
         private List<(List<Seat>, bool, DateTime)> GetResult(ISeatMonitoringApiClient seatMonitoringApiClient, int count, int interval)
         {
             var results = new List<(List<Seat>, bool, DateTime)>();
-            PeriodicNotifier.Destination destination = (List<Seat> seats, bool isSucceeded) => {
+            Action<List<Seat>, bool> destination = (List<Seat> seats, bool isSucceeded) => {
                 results.Add((seats, isSucceeded, DateTime.Now));
             };
 
-            var periodicNotifier = new PeriodicNotifier(destination, seatMonitoringApiClient, interval);
+            var periodicNotifier = new PeriodicNotifier(seatMonitoringApiClient, interval);
+            periodicNotifier.Destination += destination;
             periodicNotifier.Start();
             while (results.Count < count)
             {
@@ -84,13 +85,11 @@ namespace SeatMonitoringApplicationTest
 
 
         /// <summary>
-        /// Stopメソッドが呼び出されたとき、PeriodicNotifierのプロパティIsStopRequestedがtrueとなっているかを確認するテスト
+        /// Stopメソッドが呼び出されたとき、PeriodicNotifierのStartメソッドが終了しているか確認するテスト
         /// </summary>
         [TestMethod]
-        public void Stop_IsStopRequestedIsFalse()
+        public void Stop_StartIsStop()
         {
-            var seats = new List<Seat>();
-
             var seatMonitoringApiClientMock = new Mock<ISeatMonitoringApiClient>();
 
             var results = GetResult(seatMonitoringApiClientMock.Object, 3, 5 * 1000);

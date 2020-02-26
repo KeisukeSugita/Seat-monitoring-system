@@ -16,8 +16,32 @@ namespace SeatMonitoringApplication
         {
             Exists,
             NotExists,
-            Failure
+            Failure,
         }
+
+        /// <summary>
+        /// <see cref="SeatStatus"/>の値に対応する文字列を定義したDictionary
+        /// </summary>
+        private readonly Dictionary<SeatStatus, string> SeatStatusLabel = new Dictionary<SeatStatus, string>
+        {
+            { SeatStatus.Exists, "在席" },
+            { SeatStatus.NotExists, "離席" },
+            { SeatStatus.Failure, "状態取得失敗" },
+        };
+
+        /// <summary>
+        /// <see cref="SeatStatus"/>から対応する文字列を取得するメソッド
+        /// ・Exists："在席"
+        /// ・NotExists："離席"
+        /// ・Failure："状態取得失敗"
+        /// </summary>
+        /// <param name="seatStatus">文字列を取得したい<see cref="SeatStatus"/></param>
+        /// <returns>引数に対応する文字列</returns>
+        public string GetLabel()
+        {
+            return SeatStatusLabel[status];
+        }
+
 
         [DataMember(Name = "Name")]
         public readonly string name;
@@ -38,12 +62,12 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// 該当する文字列をenum SeatStatusに変換するクラス
-        /// status：enum SeatStatusに該当する文字列
+        /// "Exists","NotExists","Failure"を<see cref="SeatStatus"/>に変換するクラス
+        /// 上記以外の文字列の場合<see cref="InvalidOperationException"/>をスローする
         /// </summary>
-        /// <param name="status"></param>
-        /// <returns>変換されたenum SeatStatusの値</returns>
-        public SeatStatus FromString(string status)
+        /// <param name="status">変換したい文字列</param>
+        /// <returns>変換された<see cref="SeatStatus"/>の値</returns>
+        private SeatStatus FromString(string status)
         {
             if (status == Seat.SeatStatus.Exists.ToString())
             {

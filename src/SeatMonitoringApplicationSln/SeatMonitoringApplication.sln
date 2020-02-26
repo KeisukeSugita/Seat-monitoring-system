@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringApplication",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeatMonitoringApplicationTest", "SeatMonitoringApplicationTest\SeatMonitoringApplicationTest.csproj", "{456DE708-7527-43A1-AA3E-AFCEEE65381F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{88C22750-DB8C-4E45-921E-DC39DBB1566F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{456DE708-7527-43A1-AA3E-AFCEEE65381F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{456DE708-7527-43A1-AA3E-AFCEEE65381F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{456DE708-7527-43A1-AA3E-AFCEEE65381F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88C22750-DB8C-4E45-921E-DC39DBB1566F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88C22750-DB8C-4E45-921E-DC39DBB1566F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88C22750-DB8C-4E45-921E-DC39DBB1566F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88C22750-DB8C-4E45-921E-DC39DBB1566F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

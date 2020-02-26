@@ -15,16 +15,38 @@ namespace SeatMonitoringApplication
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            try
+            // Hostの読み込み
+            string host = ConfigurationManager.AppSettings["Host"];
+            if (host == null)
             {
-                Application.Run(new MainForm());
+                MessageBox.Show(@"""Host""が読み込めませんでした", "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-            catch(ConfigurationErrorsException e)
+
+            using (var httpClient = new MyHttpClient())
             {
-                // IPアドレスを読み込めなかった場合
-                MessageBox.Show(e.Message, "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var toastNotificationManager = new ToastNotificationManagerWrapper();
+                var seatToastNotifier = new SeatToastNotifier(toastNotificationManager, Application.ExecutablePath);
+                var periodicNotifier = new PeriodicNotifier(new SeatMonitoringApiClient(host, httpClient));
+
+                // 通知設定の読み込み
+                if (bool.TryParse(ConfigurationManager.AppSettings["IsNotify"], out bool isNotify))
+                {
+                    // 通知設定がtrueならトースト通知を通知先として追加する
+                    if (isNotify)
+                    {
+                        periodicNotifier.Destination += seatToastNotifier.Notify;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(@"""isNotify""が読み込めませんでした", "起動エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainForm(periodicNotifier));
             }
         }
     }
