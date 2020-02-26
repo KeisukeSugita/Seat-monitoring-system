@@ -21,6 +21,11 @@ namespace SeatMonitoringApplication
         private Task task;
         private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
+        /// <summary>
+        /// メンバ変数の初期化を行うコンストラクタ
+        /// </summary>
+        /// <param name="seatMonitoringApiClient"><see cref="ISeatMonitoringApiClient"/>のインスタンス</param>
+        /// <param name="interval"><see cref="Start"/>で開始する処理から通知が行われる時間間隔</param>
         public PeriodicNotifier(ISeatMonitoringApiClient seatMonitoringApiClient, int interval = 60 * 1000)
         {
             SeatMonitoringApiClient = seatMonitoringApiClient;
@@ -29,6 +34,7 @@ namespace SeatMonitoringApplication
 
         /// <summary>
         /// <see cref="IPeriodicNotifier.Start"/>
+        /// <see cref="ISeatMonitoringApiClient.GetSeats"/>の戻り値と、取得の可否を通知する
         /// </summary>
         public void Start()
         {            
