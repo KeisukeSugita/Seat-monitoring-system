@@ -14,7 +14,6 @@ namespace SeatMonitoringApplication
     public partial class MainForm : Form
     {
         private IPeriodicNotifier PeriodicNotifier { get; set; }
-        private StatusIcon statusIcon = new StatusIcon();
         
         /// <summary>
         /// PeriodicNotifierクラスのインスタンスをフィールドに格納し、
@@ -35,10 +34,10 @@ namespace SeatMonitoringApplication
             smallImageList.ImageSize = new Size(16, 16);
             listView1.SmallImageList = smallImageList;
 
-            smallImageList.Images.Add("在席アイコン", Image.FromFile(statusIcon.GetExistIcon()));
-            smallImageList.Images.Add("離席アイコン", Image.FromFile(statusIcon.GetNotExistIcon()));
-            smallImageList.Images.Add("状態取得失敗アイコン", Image.FromFile(statusIcon.GetFailureIcon()));
-            smallImageList.Images.Add("サーバ接続エラーアイコン", Image.FromFile(statusIcon.GetErrorIcon()));
+            smallImageList.Images.Add("在席アイコン", Image.FromFile(StatusIcon.GetExistIcon()));
+            smallImageList.Images.Add("離席アイコン", Image.FromFile(StatusIcon.GetNotExistIcon()));
+            smallImageList.Images.Add("状態取得失敗アイコン", Image.FromFile(StatusIcon.GetFailureIcon()));
+            smallImageList.Images.Add("サーバ接続エラーアイコン", Image.FromFile(StatusIcon.GetErrorIcon()));
 
             PeriodicNotifier.Start();
         }
@@ -71,8 +70,8 @@ namespace SeatMonitoringApplication
                     listView1.Items.AddRange(
                         seats.Select(seat => new ListViewItem(seat.name)
                         {
-                            ImageKey = $"{seat.GetLabel(seat.status)}アイコン",
-                            ToolTipText = seat.GetLabel(seat.status)
+                            ImageKey = $"{seat.GetLabel()}アイコン",
+                            ToolTipText = seat.GetLabel()
                         })
                         .ToArray()
                         );
