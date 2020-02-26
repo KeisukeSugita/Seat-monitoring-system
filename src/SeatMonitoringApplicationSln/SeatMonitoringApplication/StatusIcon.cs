@@ -16,7 +16,7 @@ namespace SeatMonitoringApplication
         /// 在席アイコンへの絶対パスを返すメソッド
         /// </summary>
         /// <returns>在席アイコンへの絶対パス</returns>
-        public string GetExistIcon()
+        static public string GetExistIcon()
         {
             return $@"{Application.StartupPath}\Icons\在席アイコン.png";
         }
@@ -25,7 +25,7 @@ namespace SeatMonitoringApplication
         /// 離席アイコンへの絶対パスを返すメソッド
         /// </summary>
         /// <returns>離席アイコンへの絶対パス</returns>
-        public string GetNotExistIcon()
+        static public string GetNotExistIcon()
         {
             return $@"{Application.StartupPath}\Icons\離席アイコン.png";
         }
@@ -34,7 +34,7 @@ namespace SeatMonitoringApplication
         /// 状態取得失敗アイコンへの絶対パスを返すメソッド
         /// </summary>
         /// <returns>状態取得失敗アイコンへの絶対パス</returns>
-        public string GetFailureIcon()
+        static public string GetFailureIcon()
         {
             return $@"{Application.StartupPath}\Icons\状態取得失敗アイコン.png";
         }
@@ -43,7 +43,7 @@ namespace SeatMonitoringApplication
         /// サーバ接続エラーアイコンへの絶対パスを返すメソッド
         /// </summary>
         /// <returns>サーバ接続エラーアイコンへの絶対パス</returns>
-        public string GetErrorIcon()
+        static public string GetErrorIcon()
         {
             return $@"{Application.StartupPath}\Icons\サーバ接続エラーアイコン.png";
         }
@@ -52,7 +52,7 @@ namespace SeatMonitoringApplication
         /// サーバ接続エラー復帰アイコンへの絶対パスを返すメソッド
         /// </summary>
         /// <returns>サーバ接続エラー復帰アイコンへの絶対パス</returns>
-        public string GetReturnFromErrorIcon()
+        static public string GetReturnFromErrorIcon()
         {
             return $@"{Application.StartupPath}\Icons\サーバ接続エラー復帰アイコン.png";
         }
