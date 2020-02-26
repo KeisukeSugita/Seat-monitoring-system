@@ -37,9 +37,9 @@ namespace SeatMonitoringApplication
         /// </summary>
         /// <param name="seatStatus">文字列を取得したい<see cref="SeatStatus"/></param>
         /// <returns>引数に対応する文字列</returns>
-        public string GetLabel(SeatStatus seatStatus)
+        public string GetLabel()
         {
-            return SeatStatusLabel[seatStatus];
+            return SeatStatusLabel[status];
         }
 
 
@@ -62,11 +62,12 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// 該当する文字列を<see cref="SeatStatus"/>に変換するクラス
+        /// "Exists","NotExists","Failure"を<see cref="SeatStatus"/>に変換するクラス
+        /// 上記以外の文字列の場合<see cref="InvalidOperationException"/>をスローする
         /// </summary>
         /// <param name="status">変換したい文字列</param>
         /// <returns>変換された<see cref="SeatStatus"/>の値</returns>
-        public SeatStatus FromString(string status)
+        private SeatStatus FromString(string status)
         {
             if (status == Seat.SeatStatus.Exists.ToString())
             {
