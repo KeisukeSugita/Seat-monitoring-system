@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// SeatMonitoringAPIのメソッドを呼び出すクラス
+    /// <see cref="ISeatMonitoringApiClient"/>
     /// </summary>
     public class SeatMonitoringApiClient : ISeatMonitoringApiClient
     {
@@ -24,9 +24,8 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// GetSeatsメソッドを呼び出し、結果をアプリが解釈しやすい形に変換するメソッド
+        /// <see cref="ISeatMonitoringApiClient.GetSeats"/>
         /// </summary>
-        /// <returns>取得した座席情報のリスト</returns>
         public List<Seat> GetSeats()
         {
             HttpResponseMessage responseMessage;
@@ -45,7 +44,6 @@ namespace SeatMonitoringApplication
                 throw new SeatsApiException($@"ステータスコード""{(int)responseMessage.StatusCode}""で失敗しました。");
             }
             
-
             var responseBody = responseMessage.Content.ReadAsStringAsync().Result;
 
             // JSON形式の文字列をdynamic型にデシリアライズ

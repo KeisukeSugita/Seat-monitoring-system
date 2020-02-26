@@ -4,8 +4,7 @@ using System.Net.Http;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// <see cref="HttpClient"/>クラスの一部を実装したクラス
-    /// このクラスを介してHttpClientを利用する
+    /// <see cref="IMyHttpClient"/>
     /// </summary>
     class MyHttpClient : IMyHttpClient
     {
@@ -23,10 +22,8 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// HttpClientクラスのGetAsyncメソッドの結果を返すメソッド
+        /// <see cref="IMyHttpClient.GetAsync(string)"/>
         /// </summary>
-        /// <param name="requestUri"></param>
-        /// <returns>レスポンスメッセージ</returns>
         public HttpResponseMessage GetAsync(string requestUri)
         {
             return httpClient.GetAsync(requestUri).Result;

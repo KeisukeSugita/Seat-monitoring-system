@@ -9,20 +9,13 @@ using Windows.UI.Notifications;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// <see cref="ToastNotificationManager"/>
-    /// <see cref="ToastNotifier"/>
-    /// <see cref="ToastNotification"/>
-    /// 上記クラスをラップしたクラス
+    /// <see cref="IToastNotifier"/>
     /// </summary>
     class ToastNotificationManagerWrapper :IToastNotificationManagerWrapper
     {
         /// <summary>
-        /// <see cref="ToastNotifier"/>のShowメソッドと
-        /// <see cref="ToastNotificationManager"/>のCreateToastNotifierメソッド
-        /// をラップしたメソッド
+        /// <see cref="IToastNotifier.Show(ToastNotification)"/>
         /// </summary>
-        /// <param name="applicationId">通知を発行するアプリのApplicationID</param>
-        /// <param name="xmlDocument">トースト通知の内容が記述されたXml</param>
         public void Show(string applicationId, XmlDocument xmlDocument)
         {
             ToastNotificationManager.CreateToastNotifier(applicationId).Show(new ToastNotification(xmlDocument));

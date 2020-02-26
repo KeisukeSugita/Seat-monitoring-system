@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 namespace SeatMonitoringApplication
 {
     /// <summary>
-    /// 指定されたメソッド(Destination)に結果を通知するクラス
+    /// <see cref="IPeriodicNotifier"/>
     /// </summary>
     public class PeriodicNotifier : IPeriodicNotifier
     {
         private ISeatMonitoringApiClient SeatMonitoringApiClient { get; set; }
         /// <summary>
-        ///  Startメソッドの中で定期的に実行されるメソッド
-        ///  座席の状態を通知させたいメソッドを登録できる
+        /// <see cref="IPeriodicNotifier.Destination"/>
         /// </summary>
         public Action<List<Seat>, bool> Destination { get; set; }
         private readonly int interval;
@@ -29,7 +28,7 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// 座席状態の取得と結果の通知を定期的に非同期に行うメソッド
+        /// <see cref="IPeriodicNotifier.Start"/>
         /// </summary>
         public void Start()
         {            
@@ -65,7 +64,7 @@ namespace SeatMonitoringApplication
         }
 
         /// <summary>
-        /// 非同期処理を終了させるメソッド
+        /// <see cref="IPeriodicNotifier.Stop"/>
         /// </summary>
         public void Stop()
         {
