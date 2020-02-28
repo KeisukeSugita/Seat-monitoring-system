@@ -15,6 +15,7 @@ namespace SeatMonitoringAPI.Models
     {
         private Bitmap photo;  // 取得した画像
         public readonly string moniker;
+        private static int latestNumber = 1;
         public TestCamera(string deviceInstansePath)
         {
             moniker = $@"@device:pnp:\\?\{deviceInstansePath}#{{65e8773d-8f56-11d0-a3b9-00a0c9223196}}\global";
@@ -29,27 +30,24 @@ namespace SeatMonitoringAPI.Models
         public Bitmap Shoot()
         {
             photo = null;
-            var randomNumber = new Random().Next(10);
-            switch (randomNumber)
+            switch (latestNumber % 4)
             {
-                case 0:
                 case 1:
-                case 2:
-                case 3:
+                    latestNumber++;
                     photo = new Bitmap(@"C:\OJT\座席監視システム\src\SeatMonitoringAPISln\SeatMonitoringAPI\bin\SeatMonitoringAPITest用画像\Exists画像.jpg");
                     break;
 
-                case 4:
-                case 5:
-                case 6:
-                case 7:
+                case 2:
+                    latestNumber++;
                     photo = new Bitmap(@"C:\OJT\座席監視システム\src\SeatMonitoringAPISln\SeatMonitoringAPI\bin\SeatMonitoringAPITest用画像\NotExists画像.jpg");
                     break;
 
-                case 8:
+                case 3:
+                    latestNumber++;
                     throw new InvalidOperationException("該当するカメラが存在しません。");
 
-                case 9:
+                case 0:
+                    latestNumber++;
                     throw new InvalidOperationException("画像が取得できませんでした。該当するカメラが存在しないか、接続が切断された可能性があります。");
             }
 
