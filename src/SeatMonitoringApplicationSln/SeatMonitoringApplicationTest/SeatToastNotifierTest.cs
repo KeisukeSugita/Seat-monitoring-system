@@ -80,10 +80,10 @@ namespace SeatMonitoringApplicationTest
 
             var toastNotificationManagerMock = new Mock<IToastNotificationManagerWrapper>();
             toastNotificationManagerMock
-                .Setup(x => x.Show(It.IsAny<string>(), It.IsAny<XmlDocument>()))
-                .Callback<string, XmlDocument>((x, y) =>
+                .Setup(x => x.Show(It.IsAny<string>(), It.IsAny<ToastNotification>()))
+                .Callback<string, ToastNotification>((x, y) =>
                 {
-                    resultSeatToasts.Add((x, y.GetXml()));
+                    resultSeatToasts.Add((x, y.Content.GetXml()));
                     callTimes++;
                 });
 
@@ -152,10 +152,10 @@ namespace SeatMonitoringApplicationTest
 
             var toastNotificationManagerMock = new Mock<IToastNotificationManagerWrapper>();
             toastNotificationManagerMock
-                .Setup(x => x.Show(It.IsAny<string>(), It.IsAny<XmlDocument>()))
-                .Callback<string, XmlDocument>((x, y) =>
+                .Setup(x => x.Show(It.IsAny<string>(), It.IsAny<ToastNotification>()))
+                .Callback<string, ToastNotification>((x, y) =>
                 {
-                    resultSeatToasts.Add((x, y.GetXml()));
+                    resultSeatToasts.Add((x, y.Content.GetXml()));
                     callTimes++;
                 });
 
@@ -251,10 +251,10 @@ namespace SeatMonitoringApplicationTest
 
             var toastNotificationManagerMock = new Mock<IToastNotificationManagerWrapper>();
             toastNotificationManagerMock
-                .Setup(x => x.Show(It.IsAny<string>(), It.IsAny<XmlDocument>()))
-                .Callback<string, XmlDocument>((x, y) =>
+                .Setup(x => x.Show(It.IsAny<string>(), It.IsAny<ToastNotification>()))
+                .Callback<string, ToastNotification>((x, y) =>
                 {
-                    resultSeatToasts.Add((x, y.GetXml()));
+                    resultSeatToasts.Add((x, y.Content.GetXml()));
                     callTimes++;
                 });
 
