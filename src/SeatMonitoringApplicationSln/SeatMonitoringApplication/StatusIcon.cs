@@ -52,7 +52,7 @@ namespace SeatMonitoringApplication
         /// サーバ接続エラー復帰アイコンへの絶対パスを返すメソッド
         /// </summary>
         /// <returns>サーバ接続エラー復帰アイコンへの絶対パス</returns>
-        static public string GetReturnFromErrorIcon()
+        static public string GetNomalIcon()
         {
             return $@"{Application.StartupPath}\Icons\サーバ接続エラー復帰アイコン.png";
         }

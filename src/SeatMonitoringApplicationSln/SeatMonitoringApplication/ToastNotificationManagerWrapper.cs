@@ -16,9 +16,9 @@ namespace SeatMonitoringApplication
         /// <summary>
         /// <see cref="IToastNotifier.Show(ToastNotification)"/>
         /// </summary>
-        public void Show(string applicationId, XmlDocument xmlDocument)
+        public void Show(string applicationId, ToastNotification toastNotification)
         {
-            ToastNotificationManager.CreateToastNotifier(applicationId).Show(new ToastNotification(xmlDocument));
+            ToastNotificationManager.CreateToastNotifier(applicationId).Show(toastNotification);
         }
     }
 }

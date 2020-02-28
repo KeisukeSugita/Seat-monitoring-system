@@ -105,7 +105,7 @@ namespace SeatMonitoringApplication
         /// <param name="seat">監視座席名と座席状態</param>
         /// <param name="isSucceeded">監視座席の状態取得の可否</param>
         /// <returns>作成されたXml</returns>
-        private XmlDocument CreateToastNotification(Seat seat, bool isSucceeded)
+        private ToastNotification CreateToastNotification(Seat seat, bool isSucceeded)
         {
             string icon = null;
             string text = null;
@@ -135,7 +135,7 @@ namespace SeatMonitoringApplication
             }
             else if (isSucceeded && !latestIsSucceeded)
             {
-                icon = StatusIcon.GetReturnFromErrorIcon();
+                icon = StatusIcon.GetNomalIcon();
                 text = "サーバ接続エラーから復帰しました。";
             }
             else
@@ -174,7 +174,11 @@ namespace SeatMonitoringApplication
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(toastContent.GetContent());
 
-            return xmlDoc;
+            var toastNotification = new ToastNotification(xmlDoc);
+            // 通知の有効期間の設定
+            toastNotification.ExpirationTime = DateTime.Now.AddSeconds(5.0);
+            
+            return toastNotification;
         }
     }
 }

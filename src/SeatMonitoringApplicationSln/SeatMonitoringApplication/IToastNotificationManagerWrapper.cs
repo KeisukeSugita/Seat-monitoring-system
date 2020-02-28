@@ -11,7 +11,6 @@ namespace SeatMonitoringApplication
     /// <summary>
     /// <see cref="ToastNotificationManager"/>
     /// <see cref="ToastNotifier"/>
-    /// <see cref="ToastNotification"/>
     /// 上記クラスをラップしたクラス
     /// </summary>
     public interface IToastNotificationManagerWrapper
@@ -22,7 +21,7 @@ namespace SeatMonitoringApplication
         /// をラップしたメソッド
         /// </summary>
         /// <param name="applicationId">通知を発行するアプリのApplicationID</param>
-        /// <param name="xmlDocument">トースト通知の内容が記述されたXml</param>
-        void Show(string applicationId, XmlDocument xmlDocument);
+        /// <param name="xmlDocument">トースト通知の内容が埋め込まれた<see cref="ToastNotification">のインスタンス</param>
+        void Show(string applicationId, ToastNotification tastNotification);
     }
 }
