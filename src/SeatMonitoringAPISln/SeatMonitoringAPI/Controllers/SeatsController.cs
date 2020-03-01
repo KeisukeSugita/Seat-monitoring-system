@@ -25,8 +25,11 @@ namespace SeatMonitoringAPI.Controllers
             var cameras = new List<ICamera>();
             foreach (var seatDefinition in Models.Configuration.Instance.seatDefinitions)
             {
+#if TEST
+                cameras.Add(new TestCamera(seatDefinition.deviceInstansePath));
+#else
                 cameras.Add(new Camera(seatDefinition.deviceInstansePath));
-                //cameras.Add(new TestCamera(seatDefinition.deviceInstansePath));   // 結合テスト用
+#endif
             }
             seatsScanner = new SeatsScanner(cameras, new HumanDetector());
         }
